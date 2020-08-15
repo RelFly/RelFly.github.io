@@ -1296,11 +1296,4 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
         <tag>AOP</tag>
       </tags>
   </entry>
-  <entry>
-    <title>synchronized使用及原理</title>
-    <url>/2020/08/05/synchronized1/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><a id="more"></a>
-
-<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
-  </entry>
 </search>
