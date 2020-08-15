@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/rel-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/rel-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rel-fly.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="索引结构-B+树B+树m阶B+树满足一下条件：  根结点的分支数量[k]范围为[2，m] 每个分支结点包含的分支数[x]范围为[ceil(m&#x2F;2), m] 分支结点的关键字数量[y]等于[x-1]，所以[y]的范围是[ceil(m&#x2F;2)-1, m-1]，关键字顺序递增 所有叶子结点都在同一层，且形成一个有序链表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql-索引">
+<meta property="og:url" content="https://rel-fly.com/2020/05/25/mysql1/index.html">
+<meta property="og:site_name" content="·RelFly·">
+<meta property="og:description" content="索引结构-B+树B+树m阶B+树满足一下条件：  根结点的分支数量[k]范围为[2，m] 每个分支结点包含的分支数[x]范围为[ceil(m&#x2F;2), m] 分支结点的关键字数量[y]等于[x-1]，所以[y]的范围是[ceil(m&#x2F;2)-1, m-1]，关键字顺序递增 所有叶子结点都在同一层，且形成一个有序链表">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-25T07:54:19.000Z">
+<meta property="article:modified_time" content="2020-07-08T03:58:11.508Z">
+<meta property="article:author" content="RF">
+<meta property="article:tag" content="MySql索引">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rel-fly.com/2020/05/25/mysql1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MySql-索引 | ·RelFly·</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">·RelFly·</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rel-fly.com/2020/05/25/mysql1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="RF">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="·RelFly·">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySql-索引
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-25 15:54:19" itemprop="dateCreated datePublished" datetime="2020-05-25T15:54:19+08:00">2020-05-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-08 11:58:11" itemprop="dateModified" datetime="2020-07-08T11:58:11+08:00">2020-07-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySql/" itemprop="url" rel="index"><span itemprop="name">MySql</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="索引结构-B-树"><a href="#索引结构-B-树" class="headerlink" title="索引结构-B+树"></a>索引结构-B+树</h3><h4 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h4><p>m阶B+树满足一下条件：</p>
+<ol>
+<li>根结点的分支数量[k]范围为[2，m]</li>
+<li>每个分支结点包含的分支数[x]范围为[ceil(m/2), m]</li>
+<li>分支结点的关键字数量[y]等于[x-1]，所以[y]的范围是[ceil(m/2)-1, m-1]，关键字顺序递增</li>
+<li>所有叶子结点都在同一层，且形成一个有序链表<a id="more"></a>
+
+</li>
+</ol>
+<h4 id="操作导致的结构变化"><a href="#操作导致的结构变化" class="headerlink" title="操作导致的结构变化"></a>操作导致的结构变化</h4><h5 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h5><ul>
+<li>所有节点都没有满，直接插入</li>
+<li>节点满了，将节点拆分为左右两个节点，将中间的关键字提向上一节点<pre><code>节点的拆分对性能影响较大(涉及磁盘的数据移动)，所以某些情况下会使用旋转操作代替节点拆分
+当需要拆分的叶子节点左右节点存在未满的情况(一般优先检查左节点)，会将已满的叶子节点的关
+键字分到未满的相邻节点，并替换上一级节点的关键字，确保排序正确</code></pre></li>
+</ul>
+<h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><p>   删除根据填充因子(fill factor)判断是否变化节点</p>
+<ul>
+<li>节点关键字数目满足要求，直接删除，如果该关键字还存在于非叶子节点中，用该关键字右边的关键字代替</li>
+<li>节点关键字数目少，与其兄弟节点合并，并更新上一级节点关键字，确保排序正确</li>
+</ul>
+<h3 id="innoDB索引"><a href="#innoDB索引" class="headerlink" title="innoDB索引"></a>innoDB索引</h3><h4 id="聚簇索引与非聚簇索引"><a href="#聚簇索引与非聚簇索引" class="headerlink" title="聚簇索引与非聚簇索引"></a>聚簇索引与非聚簇索引</h4><ol>
+<li>聚簇索引：索引项的顺序与表中记录的物理顺序一致，且叶子节点存储了对应数据行的数据。innoDB中主键即为聚簇索引</li>
+<li>非聚簇索引：叶子节点存储的是对应逐渐的值，索引项的顺序与表中记录的物理顺序没有关联性。对非聚簇索引的查询最后都会落到聚簇索引的二次查询。</li>
+</ol>
+<h4 id="回表与索引覆盖"><a href="#回表与索引覆盖" class="headerlink" title="回表与索引覆盖"></a>回表与索引覆盖</h4><ol>
+<li>回表：通过非聚簇索引查询，先通过非聚簇索引定位到主键值，再通过聚簇索引得到行数据。因此走了两边B+树的遍历，被称为回表查询。</li>
+<li>索引覆盖：针对组合索引来说，是指能在索引树中直接获取需要查询的全部数据，无需通过主键二次查询。避免了回表查询。</li>
+</ol>
+<h3 id="sql优化"><a href="#sql优化" class="headerlink" title="sql优化"></a>sql优化</h3><h4 id="执行计划explain"><a href="#执行计划explain" class="headerlink" title="执行计划explain"></a>执行计划explain</h4><p>explain命令是对sql执行的分析，主要关注type和extra两个信息：</p>
+<ul>
+<li><p>type： 使用索引的级别</p>
+<pre><code>1. all：全表扫描
+2. index：全索引扫描，通常出现在查询数据可直接在索引树中获取到，不需要获取行数据
+3. range：使用索引范围查询
+4. ref：查找条件使用了索引但是部位主键或者唯一索引，存在重复的值
+5. eq_ref：查找条件使用的索引为主键或者唯一索引
+6. const：将主键放置到where后面作为条件查询，mysql优化器能对这次查询进行优化转为一个常量</code></pre></li>
+<li><p>extra：重要补充信息</p>
+<pre><code>1. using filesort：进行额外的排序操作，无法使用索引排序
+2. using temporary：使用临时表保存中间结果，通常由于排序，分组，多表join导致
+3. using index：使用了索引覆盖，说明无需回表查询
+4. using index condition ：条件包含索引和未索引的列，优化器将首先解析索引的列，并在表中查找
+                           其他条件的行（将索引下推），MySql5.6的新特性
+5. using where：使用where中的条件来进行表扫描
+
+‘using where; using index’ 与 ‘using condition’相比前者更好</code></pre></li>
+</ul>
+<h4 id="索引分析show-index-from"><a href="#索引分析show-index-from" class="headerlink" title="索引分析show index from"></a>索引分析show index from</h4><p>对表中索引的相关分析，以下是相对重要的信息：</p>
+<ul>
+<li>seq_in_index：该列在索引中的位置，索引单列则为1，组合索引则为索引定义中的顺序</li>
+<li>collation：索引的存储顺序，A表示升序，NULL表示无分类</li>
+<li>cardinality：唯一值数目的估计值，数值越大越好</li>
+<li>sub_part：被编入索引的字符数量，NULL表示全被编入</li>
+<li>null：索引是否包含NULL，YES表示有，NO表示没有。通常不建议索引带有NULL值</li>
+</ul>
+<h4 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h4><ol>
+<li>索引的创建应选择区分度高的列，且避免有NULL值(建表字段建议都设置为非null的并加上默认值)</li>
+<li>控制索引的长度，对于varchar等类型的列新建索引时，在保证高区分度的前提下，尽量取最短的前缀作为索引值</li>
+<li>通过对sql的explain结果针对性优化，通常需要保证type的级别高于index。且需要注意extra中<br>出现using filesort或using temporary，这都是低效率的象征。</li>
+<li>避免复杂的联表查询，最好控制在三张表左右的关联(受表的数量级影响)</li>
+<li>排序，分组等操作需要注意是否能使用到索引</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>RF
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rel-fly.com/2020/05/25/mysql1/" title="MySql-索引">https://rel-fly.com/2020/05/25/mysql1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MySql%E7%B4%A2%E5%BC%95/" rel="tag"><i class="fa fa-tag"></i> MySql索引</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/24/redis1/" rel="prev" title="redis部分知识点梳理">
+      <i class="fa fa-chevron-left"></i> redis部分知识点梳理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/26/arrayList1/" rel="next" title="ArrayList(jdk1.8)">
+      ArrayList(jdk1.8) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#索引结构-B-树"><span class="nav-number">1.</span> <span class="nav-text">索引结构-B+树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#B-树"><span class="nav-number">1.1.</span> <span class="nav-text">B+树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作导致的结构变化"><span class="nav-number">1.2.</span> <span class="nav-text">操作导致的结构变化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#插入"><span class="nav-number">1.2.1.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除"><span class="nav-number">1.2.2.</span> <span class="nav-text">删除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#innoDB索引"><span class="nav-number">2.</span> <span class="nav-text">innoDB索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#聚簇索引与非聚簇索引"><span class="nav-number">2.1.</span> <span class="nav-text">聚簇索引与非聚簇索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回表与索引覆盖"><span class="nav-number">2.2.</span> <span class="nav-text">回表与索引覆盖</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql优化"><span class="nav-number">3.</span> <span class="nav-text">sql优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#执行计划explain"><span class="nav-number">3.1.</span> <span class="nav-text">执行计划explain</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#索引分析show-index-from"><span class="nav-number">3.2.</span> <span class="nav-text">索引分析show index from</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建议"><span class="nav-number">3.3.</span> <span class="nav-text">建议</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">RF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/RelFly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;RelFly" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RF</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">30k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">28 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

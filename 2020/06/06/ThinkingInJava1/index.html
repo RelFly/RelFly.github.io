@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/rel-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/rel-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rel-fly.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言  准备开始阅读《Thinking in Java(第四版)》，这是Java的经典书籍，看了下目录，基本涵盖了Java编程的所有知识点。  本章先从第一，二章开始记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkingInJava-1">
+<meta property="og:url" content="https://rel-fly.com/2020/06/06/ThinkingInJava1/index.html">
+<meta property="og:site_name" content="·RelFly·">
+<meta property="og:description" content="前言  准备开始阅读《Thinking in Java(第四版)》，这是Java的经典书籍，看了下目录，基本涵盖了Java编程的所有知识点。  本章先从第一，二章开始记录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-06T02:06:41.000Z">
+<meta property="article:modified_time" content="2020-07-14T08:25:56.267Z">
+<meta property="article:author" content="RF">
+<meta property="article:tag" content="ThinkingInJava">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rel-fly.com/2020/06/06/ThinkingInJava1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ThinkingInJava-1 | ·RelFly·</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">·RelFly·</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rel-fly.com/2020/06/06/ThinkingInJava1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="RF">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="·RelFly·">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ThinkingInJava-1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-06 10:06:41" itemprop="dateCreated datePublished" datetime="2020-06-06T10:06:41+08:00">2020-06-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-14 16:25:56" itemprop="dateModified" datetime="2020-07-14T16:25:56+08:00">2020-07-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/ThinkingInJava/" itemprop="url" rel="index"><span itemprop="name">ThinkingInJava</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  准备开始阅读《Thinking in Java(第四版)》，这是Java的经典书籍，看了下目录，基本涵盖了Java编程的所有知识点。<br>  本章先从第一，二章开始记录。</p>
+<a id="more"></a>
+
+<h3 id="对象导论"><a href="#对象导论" class="headerlink" title="对象导论"></a>对象导论</h3><p>  作为本书的第一章，对象导论围绕面向对象，简述了其思想，设计以及相关的概念。</p>
+<h4 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h4><p>  Java是面向对象的编程语言，那么对象，究竟如何理解与定义？</p>
+<p>  先看看面向对象语言的鼻祖-smalltakl的五个特性：</p>
+<pre><code>1. 万物皆对象
+2. 程序是对象的集合，他们通过发送消息(可以理解为方法的调用)来告知彼此要做什么
+3. 每个对象都有自己的由其他对象所构成的存储(可以理解成类的聚合和组合关系)
+4. 每个对象都拥有类型即每个对象都是某个类(class)的一个实例
+5. 某一特定类型的所有对象都可以接手同样的消息(继承)</code></pre><p>  关于对象，还有这么一个简单的描述：</p>
+<blockquote>
+<p> <em>对象具有状态，行为和标识   —Booch</em></p>
+</blockquote>
+<pre><code>1. 状态：对象拥有的内部数据(属性)
+2. 行为：对象的方法
+3. 标识：区分对象的唯一的地址(书中解释到这一点有些过于受限，当对象被存储在不同的机器和地址空间或者
+           硬盘上时，标识就应该是内存地址之外的其他东西)</code></pre><p>  对象，是遵照一定规则对实际问题的抽象或者说描述。比如：老鹰，新建一个老鹰的类型，它的属性有性别，年龄等，它的行为有飞行，捕食等。<br>  而将属性具体化后，就得到一个对象。通过执行对象的行为来完成对实际问题的描述，例如调用他的飞行方法描述飞翔的过程。</p>
+<h4 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h4><p>  面向对象的思想其实很好理解，他即是将现实事物转为程序语言去处理。抽象出现实事务的属性和行为作为一个类型，然后创建对应的对象完成对现实问题的描述(可以理解为业务逻辑的完成)。</p>
+<blockquote>
+<p> <em>这是一种更灵活更强有力的语言抽象</em></p>
+</blockquote>
+<p>  这句话应该很好的概括了面向对象的优势。</p>
+<p>  那么谈到面向对象，肯定逃不开抽象，继承，封装，多态：</p>
+<pre><code>1. 抽象，对事务公共属性，行为的归纳提取，创建一个类型。
+2. 继承，基于现有抽象的新的抽象。即在保留相同属性，行为的基础上建立一个新的类型。而新类型的行为可
+   以有自己单独的实现方式，而且保留父类的属性行为基础上，还可以增加新的属性和行为
+   例如：鸟类的飞行行为，继承鸟类的老鹰和麻雀都拥有同样的飞行行为，但两者可飞行的高度不同。而对老
+   鹰可以增加对其他动物的捕食行为
+   继承一方面提高了代码的复用性，另一方面也是建立了类与类间的关系，体现了对实际事务的描述
+3. 封装，目的是隐藏一些没必要被开发者知晓的信息，减少操作带来的bug。是为了程序安全性的一种措施。通
+   常借助代码的访问控制达成(public,private,protected)
+4. 多态，基于继承的关系，在编译期可以将一个对象当作他的父类对待，直到运行期才确定他的类型。这种特
+   性可以提高代码的扩展性，例如：一个方法的入参可以用父类定义，而传参时选择不同的子类以完成不同的
+   逻辑处理</code></pre><h3 id="一切都是对象"><a href="#一切都是对象" class="headerlink" title="一切都是对象"></a>一切都是对象</h3><p>  本书第二章从对象的创建谈起，逐步讲述了怎样构建一个简单的Java程序，包括编码规范，注释，javadoc标签等。因为是比较基础的内容，所以就摘一些我比较感兴趣的记录一下。</p>
+<h4 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h4><p>  Java中对对象的控制是用引用完成的，例如</p>
+<blockquote>
+<p>ClassA a = new ClassA();</p>
+</blockquote>
+<p>  这里初始化一个类型ClassA的对象a，a只是对象的一个引用，是一个地址值，指向堆中实际数据存储的地方。<br>  这也是在参数传递的时候时常容易忽略的问题。<br>  参数如果是对象，传递的是对象的引用值，那么方法内的操作就会反馈到同一对象的所有引用上。<br>  参数如果是基本类型，基本类型存储的是数据本身，这时传递的就是数据的值，所以不影响方法外的基本类型的值。<br>  这里举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ClassB b = <span class="keyword">new</span> ClassB(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">int</span> c = <span class="number">1</span>;</span><br><span class="line">updateB(b,c);</span><br><span class="line"></span><br><span class="line"><span class="comment">// b的value属性会改变，而c的值不变</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateB</span><span class="params">(ClassB param1, <span class="keyword">int</span> param2)</span></span>&#123;</span><br><span class="line">  param1.value = <span class="number">2</span>;</span><br><span class="line">  param2 = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><p>  static关键字是常用的关键字之一。他开辟独属于类的存储空间，不依赖于对象的创建，是所有对象公有的。<br>  当类第一次加载时，static修饰的方法，属性，代码块就会随之加载，且只会加载这一次。<br>  因此我们可以将一些类的初始化操作(设置默认值等)，常量，公用方法用static修饰处理，因为只会加载一次，所以一方面提升效率，另一方面保证数据不可变。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>  书的第一章，第二章比较基础，介绍了面向对象的思想，Java的基础概念。算是温故了一些知识点，不过对
+面向对象及对象的一些概念的阐述感觉让自己的认知更加清晰了。</code></pre><blockquote>
+<p>下一章 <a href="https://rel-fly.com/2020/06/07/ThinkingInJava2/">&lt;ThinkingInJava-2&gt;</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>RF
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rel-fly.com/2020/06/06/ThinkingInJava1/" title="ThinkingInJava-1">https://rel-fly.com/2020/06/06/ThinkingInJava1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/ThinkingInJava/" rel="tag"><i class="fa fa-tag"></i> ThinkingInJava</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/03/innoDBLock/" rel="prev" title="MySql-InnoDB锁">
+      <i class="fa fa-chevron-left"></i> MySql-InnoDB锁
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/07/ThinkingInJava2/" rel="next" title="ThinkingInJava-2">
+      ThinkingInJava-2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对象导论"><span class="nav-number">2.</span> <span class="nav-text">对象导论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象"><span class="nav-number">2.1.</span> <span class="nav-text">对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#面向对象"><span class="nav-number">2.2.</span> <span class="nav-text">面向对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一切都是对象"><span class="nav-number">3.</span> <span class="nav-text">一切都是对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引用"><span class="nav-number">3.1.</span> <span class="nav-text">引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#static"><span class="nav-number">3.2.</span> <span class="nav-text">static</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">RF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/RelFly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;RelFly" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RF</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">30k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">28 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
