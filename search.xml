@@ -1343,17 +1343,75 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
       </tags>
   </entry>
   <entry>
-    <title>CurrentHashMap1</title>
-    <url>/2020/08/18/CurrentHashMap1/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><a id="more"></a>
+    <title>synchronized相关-加锁过程解析</title>
+    <url>/2020/08/27/synchronized2/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  <a href="https://rel-fly.com/2020/08/15/synchronized1/">上一章</a>总结了synchronized相关的对象头和锁机制，这一章就锁的加锁及升级过程总结一下。</p>
+<a id="more"></a>
 
-<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
-  </entry>
-  <entry>
-    <title>volatile1</title>
-    <url>/2020/08/18/volatile1/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><a id="more"></a>
+<h3 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h3><p>  首先看一下偏向锁的几个例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 未偏向线程，可偏向状态</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testOne</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"ob"</span>;</span><br><span class="line">    System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
+<img src="/image/synchronized/synchronized3.png" class="" title="testOne()输出结果">
+
+<p>  上例虽然并没有使用synchronized，但输出结果可以看到，锁标志仍然是’101’，不过表示偏向线程标识的位都是零说明此时并未偏向任何线程。<br>  这种情况可以理解为此时锁处于“可偏向但还未偏向”的状态。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 偏向锁偏向占用线程</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testTwo</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"hello"</span>;</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/image/synchronized/synchronized4.png" class="" title="testTwo()输出结果">
+
+<p>  testTwo()就展示了一个常见的单一线程占用锁资源的场景，可以看到开始锁标识是“可偏向但还未偏向”的状态。<br>  而当进入同步代码块后，锁就偏向了当前线程。</p>
+<h4 id="加锁过程"><a href="#加锁过程" class="headerlink" title="加锁过程"></a>加锁过程</h4><ol>
+<li>首次占用<br>首先，线程会在自己栈帧中存储一份对象头信息，作为CAS操作的期望值，这块空间被称为<em>Lock Word</em> 。如果CAS执行成功，即当前对象是无锁状态，则直接偏向。</li>
+<li>重入<br>当尝试占用时，发现偏向线程即为当前线程，则会在线程栈帧中再添加一个<em>Lock Word</em> ，但其存的对象头信息为空，与首次存的<em>Lock Word</em> 区分开。<br>这个新增的<em>Lock Word</em> 会作为重入的统计标识，每当退出一次则会清空一个<em>Lock Word</em> 表示一次释放。</li>
+<li>竞争<br>如果请求占用的锁已偏向且偏向的不是的当前线程，则会判断被偏向的线程是否存活或已释放锁：<br>a)线程存活且还在占用，则进行轻量级锁的升级<br>b)线程未存活或不再占用，则会先修改对象头为无锁状态，然后做轻量级锁的升级</li>
+</ol>
+<p>  偏向锁不会主动释放，当偏向后，对象头就会一直处于偏向的状态，直到下一个来竞争的线程使其升级。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"hello"</span>;</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread2:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/image/synchronized/synchronized8.png" class="" title="thread1占用及结束后的对象头信息">
+
+<img src="/image/synchronized/synchronized9.png" class="" title="thread2占用及结束后的对象头信息">
+
+<h3 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h3><p>  出现轻量级锁会有两种情况，一种是正常的抢占偏向锁导致的升级，第二种就是从无锁状态直接到轻量级锁状态。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testThree</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"123"</span>;</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    <span class="comment">// thread1先抢占到锁</span></span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">100</span>);</span><br><span class="line">    <span class="comment">// thread2去竞争锁，此时导致偏向锁升级</span></span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread2:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/image/synchronized/synchronized5.png" class="" title="testThree()输出结果">
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 无锁直接升级到轻量级锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFour</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"Object"</span>;</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/image/synchronized/synchronized6.png" class="" title="testFour()输出结果">
+
+<h4 id="加锁过程-1"><a href="#加锁过程-1" class="headerlink" title="加锁过程"></a>加锁过程</h4><p>  轻量级锁的加锁过程与偏向锁有点类似，也是基于<em>Lock Word</em> 去做CAS操作。</p>
+<ol>
+<li><p>首先在<em>Lock Word</em> 中存储一个空的<em>Mark Word</em> 对象，其中会存储指向锁对象的指针<br>然后将这个空的对象头作为期望值去做CAS操作</p>
+</li>
+<li><p>CAS成功：表示此时是无锁状态，直接占用，对象头中存储指向<em>Lock Word</em> 的指针，此时两者互相指向</p>
+</li>
+<li><p>CAS失败：会先判断是否重入，是则在栈帧中增加一个<em>Lock Word</em> 表示重入，否则进行锁升级</p>
+</li>
+</ol>
+<h3 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testFive</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    String object = <span class="string">"hello"</span>;</span><br><span class="line">    System.out.println(<span class="string">"master:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread1:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    threadPoolExecutor.execute(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (object) &#123;</span><br><span class="line">            System.out.println(<span class="string">"thread2:"</span> + ClassLayout.parseInstance(object).toPrintable());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    Thread.sleep(<span class="number">10000</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/image/synchronized/synchronized7.png" class="" title="testFive()输出结果">
+
+<h4 id="重量级锁结构"><a href="#重量级锁结构" class="headerlink" title="重量级锁结构"></a>重量级锁结构</h4><p>  重量级锁与偏向锁，轻量级锁就有很大的差别了，当升级为重量级锁后，未占用的线程是处于阻塞状态的，他的实现是基于<em>Monitor</em> 的结构。</p>
+<p>  <em>Monitor</em> 中维护了一个阻塞队列用来存储被阻塞的线程信息，还有一个等待队列，当线程调用wait()方法后，就会释放锁进入等待队列。<br>  <img src="/image/synchronized/synchronized10.png" class="" title="重量级锁结构"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>  为了清楚的理解synchronized中锁升级及加锁流程，也很是看了很久博客和文档。算是大概理出了
+加锁流程，不过还有很多细节没有弄清楚。
+1. 测试时，定义的String对象内容如果是Object类似的关键字，就会跳过偏向锁，直接升级为轻量
+   级锁。(这种情况我了解的是当对象头的HashCode有值导致偏向锁偏向标识的空间被占用无法偏向
+   才会出现)
+2. 偏向锁与轻量级锁都会在线程栈帧中Lock Word存储对象头信息用作CAS操作，这里我理解的是
+   用无锁状态的对象头当作期望值去尝试CAS，这样当对象头被释放时就能CAS成功
+3. 理解synchronized的使用其实只要抓住他锁定的是对象就够了，关于锁升级主要是了解什么操作
+   会导致重量级锁出现，以尽量避免重量级锁</code></pre><blockquote>
+<p><a href="https://rel-fly.com/2020/08/15/synchronized1/">synchronized相关-对象头&amp;锁机制</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>多线程</category>
+      </categories>
+      <tags>
+        <tag>多线程</tag>
+      </tags>
   </entry>
 </search>
