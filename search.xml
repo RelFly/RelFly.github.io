@@ -17,6 +17,60 @@
     
     
     <entry>
+      <title>SpringCache的使用</title>
+      <link href="/2020/11/02/spring-cache1/"/>
+      <url>/2020/11/02/spring-cache1/</url>
+      
+        <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>   在开发一些配置相关的业务时，由于数据变化频率很低，很适合在查询的时候使用缓存。但对于一些复杂的数<br>   据结构，使用redis存取又觉得比较麻烦。<br>   幸好，Spring提供了注解式的缓存方案-SpringCache。</p><a id="more"></a><h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><p>   SpringCache借助注解来实现对数据的缓存及删除。所以，这里以每个注解为入口依次了解他们的使用。</p><h4 id="EnableCaching"><a href="#EnableCaching" class="headerlink" title="@EnableCaching"></a>@EnableCaching</h4><p>   @EnableCaching注解用来开启SpringCache的缓存功能。</p><h4 id="Cacheable"><a href="#Cacheable" class="headerlink" title="@Cacheable"></a>@Cacheable</h4><p>   @Cacheable用来新增缓存</p><h4 id="CachePut"><a href="#CachePut" class="headerlink" title="@CachePut"></a>@CachePut</h4><p>   @CachePut用来更新缓存</p><h4 id="CahceEvict"><a href="#CahceEvict" class="headerlink" title="@CahceEvict"></a>@CahceEvict</h4><p>   @CacheEvice用来清除缓存</p><h4 id="Caching"><a href="#Caching" class="headerlink" title="@Caching"></a>@Caching</h4><h4 id="CacheConfig"><a href="#CacheConfig" class="headerlink" title="@CacheConfig"></a>@CacheConfig</h4><img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
+      
+      
+      <categories>
+          
+          <category> Spring </category>
+          
+          <category> SpringCache </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 缓存 </tag>
+            
+            <tag> SpringCache </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>飞仔的食谱</title>
+      <link href="/2020/09/23/recipe1/"/>
+      <url>/2020/09/23/recipe1/</url>
+      
+        <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  食谱及对应食材的总结记录</p><a id="more"></a><h3 id="红烧肉"><a href="#红烧肉" class="headerlink" title="红烧肉"></a>红烧肉</h3><p>  五花肉，大葱，生姜，大蒜，八角，花椒，啤酒</p><h3 id="可乐鸡翅"><a href="#可乐鸡翅" class="headerlink" title="可乐鸡翅"></a>可乐鸡翅</h3><p>  鸡翅，可乐</p><h3 id="鸡胸肉"><a href="#鸡胸肉" class="headerlink" title="鸡胸肉"></a>鸡胸肉</h3><p>  鸡胸肉，玉米，绿豆</p><h3 id="黄瓜火腿"><a href="#黄瓜火腿" class="headerlink" title="黄瓜火腿"></a>黄瓜火腿</h3><p>  黄瓜，鸡蛋，火腿</p><h3 id="番茄土豆牛腩"><a href="#番茄土豆牛腩" class="headerlink" title="番茄土豆牛腩"></a>番茄土豆牛腩</h3><p>  牛腩，番茄，土豆，大葱，生姜，八角</p><h3 id="洋葱鸡蛋"><a href="#洋葱鸡蛋" class="headerlink" title="洋葱鸡蛋"></a>洋葱鸡蛋</h3><p>  洋葱，鸡蛋</p><h3 id="麻辣香锅"><a href="#麻辣香锅" class="headerlink" title="麻辣香锅"></a>麻辣香锅</h3><p>  五花肉，黄瓜，藕，土豆，玉米，鸡肉，花椒，八角，酱料</p><h3 id="土豆烧肉"><a href="#土豆烧肉" class="headerlink" title="土豆烧肉"></a>土豆烧肉</h3><p>  土豆，廋肉</p><h3 id="辣椒炒肉"><a href="#辣椒炒肉" class="headerlink" title="辣椒炒肉"></a>辣椒炒肉</h3><p>  辣椒，廋肉</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 料理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 料理 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>JUC-Lock(jdk1.8)</title>
       <link href="/2020/09/12/lock1/"/>
       <url>/2020/09/12/lock1/</url>
@@ -52,6 +106,8 @@
       
       
       <categories>
+          
+          <category> Java </category>
           
           <category> 多线程 </category>
           
@@ -186,7 +242,7 @@
       
       <categories>
           
-          <category> spring </category>
+          <category> Spring </category>
           
           <category> AOP </category>
           
