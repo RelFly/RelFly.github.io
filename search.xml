@@ -1788,4 +1788,44 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
         <tag>排序算法</tag>
       </tags>
   </entry>
+  <entry>
+    <title>算法笔记-贪心算法</title>
+    <url>/2021/04/12/greedy-algorithms/</url>
+    <content><![CDATA[<h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>   贪心算法的思路即每一次操作都是最优的，那么这些最优操作的最终结果也就是最优解。</p>
+<a id="more"></a>
+
+<h3 id="分配问题"><a href="#分配问题" class="headerlink" title="分配问题"></a>分配问题</h3><h4 id="1-问题描述"><a href="#1-问题描述" class="headerlink" title="1.问题描述"></a>1.问题描述</h4><pre><code>有一群孩子和一堆饼干，每个孩子有一个饥饿度，每个饼干都有一个大小。每个孩子只能吃最多
+一个饼干，且只有饼干的大小大于孩子的饥饿度时，这个孩子才能吃饱。求解最多有多少孩子可
+以吃饱。</code></pre><h4 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h4><pre><code>根据贪心算法的思路，每一次分配饼干都选择最容易满足的，即饥饿度最小的孩子。选择恰好
+能满足他的饼干，即饼干大小大于等于其饥饿度中最小的饼干。这样能保证每一次分配都不浪
+费，能够尽可能多的满足孩子。</code></pre><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">assignCookies</span><span class="params">(childs, cookies MyInt)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	sort.Sort(childs)</span><br><span class="line">	sort.Sort(cookies)</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	j := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> ; i &lt; <span class="built_in">len</span>(childs) &amp;&amp; j &lt; <span class="built_in">len</span>(cookies); j++ &#123;</span><br><span class="line">		<span class="keyword">if</span> childs[i] &lt;= cookies[j] &#123;</span><br><span class="line">			<span class="comment">// 喂饼干 并切换到下一个小孩</span></span><br><span class="line">			i++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-问题描述"><a href="#2-问题描述" class="headerlink" title="2.问题描述"></a>2.问题描述</h4><pre><code>一群孩子站成一排，每一个孩子有自己的评分。现在需要给这些孩子发糖果，规则是如果一
+个孩子的评分比自己身旁的一个孩子要高，那么这个孩子就必须得到比身旁孩子更多的糖果。
+所有孩子至少要有一个糖果。求解最少需要多少个糖果。</code></pre><h4 id="解题思路-1"><a href="#解题思路-1" class="headerlink" title="解题思路"></a>解题思路</h4><pre><code>1. 因为要求每个孩子至少有一个糖果，所以最理想情况：所有孩子评分一样，那么结果是
+   每个孩子都有且只有一个糖果
+2. 以理想情况的结果为基础，先从左至右比较，因为要求最少糖果，所以只比评分低的孩
+   子多加一个糖果。这一轮比较完以后，可以确定最后一个孩子的糖果数就是最终结果
+3. 从最后一个孩子开始，从右至左开始比较，这样就能得到最后的结果</code></pre><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">candy</span><span class="params">(childs []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	size := <span class="built_in">len</span>(childs)</span><br><span class="line">	<span class="keyword">if</span> size &lt; <span class="number">2</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> size</span><br><span class="line">	&#125;</span><br><span class="line">	result := <span class="built_in">make</span>([]<span class="keyword">int</span>, size, size)</span><br><span class="line">	<span class="keyword">for</span> i, element := <span class="keyword">range</span> childs &#123;</span><br><span class="line">		<span class="keyword">if</span> result[i] == <span class="number">0</span> &#123;</span><br><span class="line">			result[i] = <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> element &gt; childs[i<span class="number">-1</span>] &amp;&amp; result[i] &lt;= result[i<span class="number">-1</span>] &#123;</span><br><span class="line">			result[i] = result[i<span class="number">-1</span>] + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	count := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := size - <span class="number">1</span>; i &gt; <span class="number">0</span>; i-- &#123;</span><br><span class="line">		<span class="keyword">if</span> childs[i] &lt; childs[i<span class="number">-1</span>] &amp;&amp; result[i] &gt;= result[i<span class="number">-1</span>] &#123;</span><br><span class="line">			result[i<span class="number">-1</span>] = result[i] + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">		count = count + result[i]</span><br><span class="line">	&#125;</span><br><span class="line">	count = count + result[<span class="number">0</span>]</span><br><span class="line">	<span class="keyword">return</span> count</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="区间问题"><a href="#区间问题" class="headerlink" title="区间问题"></a>区间问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><pre><code>给定多个区间，计算让这些区间互不重叠所需要移除区间的最少个数。起止相连不算重叠</code></pre><h4 id="解题思路-2"><a href="#解题思路-2" class="headerlink" title="解题思路"></a>解题思路</h4><pre><code>需要统计重叠的最少区间，就需要按照一定顺序依次判断确定。
+1. 将区间集合按照尾端顺序排序
+2. 设置一个当前区间，初始化为第一个区间
+3. 从第二个区间开始遍历，与当前区间比较，重叠则统计为移除区间，反之取代当前区间
+4. 重复3，直至结束</code></pre><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">eraseOverlapIntervals</span><span class="params">(param [][]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	size := <span class="built_in">len</span>(param)</span><br><span class="line">	<span class="keyword">if</span> size &lt; <span class="number">2</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 按照尾端升序排序</span></span><br><span class="line">	<span class="keyword">for</span> block := size / <span class="number">2</span>; block &gt;= <span class="number">1</span>; block = block / <span class="number">2</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> i := block; i &lt; size; i = i + block &#123;</span><br><span class="line">			current := param[i]</span><br><span class="line">			j := i - block</span><br><span class="line">			<span class="keyword">for</span> ; j &gt;= <span class="number">0</span>; &#123;</span><br><span class="line">				loop := param[j]</span><br><span class="line">				<span class="keyword">if</span> loop[<span class="number">1</span>] &gt; current[<span class="number">1</span>] &#123;</span><br><span class="line">					param[j+block] = loop</span><br><span class="line">					j = j - block</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			param[j+block] = current</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;	<span class="comment">// 筛选</span></span><br><span class="line">	count := <span class="number">0</span></span><br><span class="line">	currentNum := param[<span class="number">0</span>][<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; size; i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> param[i][<span class="number">0</span>] &lt; currentNum &#123;</span><br><span class="line">			count++</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		currentNum = param[i][<span class="number">1</span>]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> count</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>贪心算法的策略是找到一个问题的每次操作的最优解，但对于每个问题的操作最优解的体现是不一样的。
+饼干分配的最优解是先满足饥饿度最小的孩子，这样能够余留足够多的饼干尽可能多的满足剩下的孩子。
+糖果分配的问题最优解是先确定一边的孩子糖果满足条件，再确定另一边的。
+区间问题则只要按照x轴从左到右确定区间，这样就能保证留下的区间是最多的，那么</code></pre><p> 去除的区间自然就是最少的。<br>    总体而言，使用贪心算法的前提是能保证每次操作的最优解必然能得出最优的结果，反之则无法使用贪心算<br>    法解决问题。通常来看，其比较适合解决一些最大最小值的问题。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>算法笔记</category>
+        <category>贪心算法</category>
+      </categories>
+      <tags>
+        <tag>算法笔记</tag>
+      </tags>
+  </entry>
 </search>
