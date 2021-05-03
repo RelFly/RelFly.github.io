@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/rel-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/rel-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rel-fly.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言本章来谈谈如何使用redis实现分布式锁">
+<meta property="og:type" content="article">
+<meta property="og:title" content="reids-分布式锁">
+<meta property="og:url" content="https://rel-fly.com/2021/05/01/redis-distributed-lock/index.html">
+<meta property="og:site_name" content="·RelFly·">
+<meta property="og:description" content="前言本章来谈谈如何使用redis实现分布式锁">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-01T02:09:09.000Z">
+<meta property="article:modified_time" content="2021-05-03T02:32:16.223Z">
+<meta property="article:author" content="RF">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="分布式锁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://rel-fly.com/2021/05/01/redis-distributed-lock/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>reids-分布式锁 | ·RelFly·</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">·RelFly·</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rel-fly.com/2021/05/01/redis-distributed-lock/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="RF">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="·RelFly·">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          reids-分布式锁
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-01 10:09:09" itemprop="dateCreated datePublished" datetime="2021-05-01T10:09:09+08:00">2021-05-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-03 10:32:16" itemprop="dateModified" datetime="2021-05-03T10:32:16+08:00">2021-05-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index"><span itemprop="name">redis</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><pre><code>本章来谈谈如何使用redis实现分布式锁</code></pre><a id="more"></a>
+
+<h3 id="常规方案"><a href="#常规方案" class="headerlink" title="常规方案"></a>常规方案</h3><h4 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h4><pre><code>最简单的方案就是利用redis的set NX命令去获取锁，用delete命令释放锁。
+这种实现简单直接，但其有以下弊端：
+1. setnx命令后需要执行expire设置锁的过期时间，否则，持有锁的线程down掉，锁永远无法释放
+   而这两个命令是非原子性的，无法保证一起成功
+2. delete释放锁，在持有锁的线程还未结束，但是已超过锁的过期时间，这时第二个获取到锁的线程
+   正准备执行，第一个线程执行完毕执行delete，释放的就是第二个线程持有的锁
+3. 无法实现重入</code></pre><h4 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h4><pre><code>有问题自然就要解决，针对方案一的问题1和2，有以下解决方案：
+1. 使用redis set命令的参数EX PX，可以同时设置过期时间，而spring的redisremplate也封装了
+   setIfAbsent(K key, V value, long timeout, TimeUnit unit) 方法实现该功能
+2. 为了防止释放锁时误删不属于自己的锁，可以对缓存的value设置一个自定义值，在释放时进行
+   判断，如果属于自己才执行delete操作
+3. 为保证释放锁操作的原子性，可以借用lua脚本提交释放锁的命令
+
+相对方案一，方案二仍然存在几个问题
+1. 在服务挂掉时，只能依赖锁超时来释放锁，在一些场景下并不友好
+2. 若redis有多个节点，可能存在主节点挂掉，锁信息还未同步到从节点导致锁丢失的情况
+3. 依然不能重入</code></pre><h3 id="Redlock算法"><a href="#Redlock算法" class="headerlink" title="Redlock算法"></a>Redlock算法</h3><pre><code>常规方案只适合于redis单点部署的情况，就如方案二中提到的，若redis存在多个节点就可能因为主节点挂掉
+且锁信息未及时复制到从节点而导致锁失效。
+所幸，redis提供了解决这种问题的方案，那就是Redlock算法</code></pre><h4 id="算法思路"><a href="#算法思路" class="headerlink" title="算法思路"></a>算法思路</h4><pre><code>总的看来，Redlock的思路是将锁存在N个主节点中，这样减小主节点挂掉对锁的影响。
+而为了较为安全搞笑实现这一过程，他的具体思路如下：
+1. 获取当前毫秒级的时间
+2. 依次用相同的key和随机值去每个redis实例中获取锁
+   设置一个超时时间，某个实例获取锁的时间超过就放弃，去下个实例
+3. 当超过一半(至少达到N/2+1个)的锁获取成功，且获取锁所花费的时间小于设置的锁有效时间，则视为
+   获取锁成功
+4. 获取锁成功后，线程能够持有的时间=最初有效时长-获取锁消耗的时间
+5. 若最终获取失败(获取的实例个数小于一半，或最终有效时间无意义)，则会解除所有实例的锁</code></pre><h3 id="redisson"><a href="#redisson" class="headerlink" title="redisson"></a>redisson</h3><pre><code>redisson是基于redis实现的一个Java驻内存数据网格。
+其根据redlock实现了分布式锁。</code></pre><h4 id="RLock类"><a href="#RLock类" class="headerlink" title="RLock类"></a>RLock类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 分布式锁接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RLock</span> <span class="keyword">extends</span> <span class="title">Lock</span>, <span class="title">RExpirable</span>, <span class="title">RLockAsync</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取锁的三个方式，leaseTime表示获取到锁后的有效时间</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">(<span class="keyword">long</span> leaseTime, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> waitTime, <span class="keyword">long</span> leaseTime, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">long</span> leaseTime, TimeUnit unit)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">forceUnlock</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isLocked</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isHeldByCurrentThread</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// 重入次数的获取</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getHoldCount</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RedissonLock类"><a href="#RedissonLock类" class="headerlink" title="RedissonLock类"></a>RedissonLock类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 具体的实现类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedissonLock</span> <span class="keyword">extends</span> <span class="title">RedissonExpirable</span> <span class="keyword">implements</span> <span class="title">RLock</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 核心方法</span></span><br><span class="line"><span class="comment">// 加锁逻辑 这里的threadId为当前线程id</span></span><br><span class="line">&lt;T&gt; <span class="function">RFuture&lt;T&gt; <span class="title">tryLockInnerAsync</span><span class="params">(<span class="keyword">long</span> leaseTime, TimeUnit unit, <span class="keyword">long</span> threadId, RedisStrictCommand&lt;T&gt; command)</span> </span>&#123;</span><br><span class="line">    internalLockLeaseTime = unit.toMillis(leaseTime);</span><br><span class="line">    <span class="comment">// 通过lua提交redis命令保证原子性</span></span><br><span class="line">    <span class="comment">// KEYS[1] 指 getName()的值也就是创建锁对象时设置的key</span></span><br><span class="line">    <span class="comment">// ARGV[1] 指 internalLockLeaseTime 也就是锁的有效时间</span></span><br><span class="line">    <span class="comment">// ARGV[2] 指 threadId 当前线程id</span></span><br><span class="line">    <span class="comment">// 第一段lua命令是 如果key不存在就设置一个hash类型缓存，</span></span><br><span class="line">    <span class="comment">//                hash中元素的key为当前线程id，value为1</span></span><br><span class="line">    <span class="comment">// 第二段命令则是重入锁判断 用当前线程id去hash里判断是否存在</span></span><br><span class="line">    <span class="comment">//                        若存在，则将value+1</span></span><br><span class="line">    <span class="comment">// 最后返回此时锁的剩余有效时间</span></span><br><span class="line">    <span class="keyword">return</span> commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, command,</span><br><span class="line">              <span class="string">"if (redis.call('exists', KEYS[1]) == 0) then "</span> +</span><br><span class="line">                  <span class="string">"redis.call('hset', KEYS[1], ARGV[2], 1); "</span> +</span><br><span class="line">                  <span class="string">"redis.call('pexpire', KEYS[1], ARGV[1]); "</span> +</span><br><span class="line">                  <span class="string">"return nil; "</span> +</span><br><span class="line">              <span class="string">"end; "</span> +</span><br><span class="line">              <span class="string">"if (redis.call('hexists', KEYS[1], ARGV[2]) == 1) then "</span> +</span><br><span class="line">                  <span class="string">"redis.call('hincrby', KEYS[1], ARGV[2], 1); "</span> +</span><br><span class="line">                  <span class="string">"redis.call('pexpire', KEYS[1], ARGV[1]); "</span> +</span><br><span class="line">                  <span class="string">"return nil; "</span> +</span><br><span class="line">              <span class="string">"end; "</span> +</span><br><span class="line">              <span class="string">"return redis.call('pttl', KEYS[1]);"</span>,</span><br><span class="line">                Collections.&lt;Object&gt;singletonList(getName()), internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 锁释放的逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> RFuture&lt;Boolean&gt; <span class="title">unlockInnerAsync</span><span class="params">(<span class="keyword">long</span> threadId)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">    		<span class="comment">// 锁不存在，发布unlockMessage消息</span></span><br><span class="line">            <span class="string">"if (redis.call('exists', KEYS[1]) == 0) then "</span> +</span><br><span class="line">                <span class="string">"redis.call('publish', KEYS[2], ARGV[1]); "</span> +</span><br><span class="line">                <span class="string">"return 1; "</span> +</span><br><span class="line">            <span class="string">"end;"</span> +</span><br><span class="line">            <span class="comment">// 锁存在，但hash获取不到对应key的值，表示锁被其他线程占用，直接返回</span></span><br><span class="line">            <span class="string">"if (redis.call('hexists', KEYS[1], ARGV[3]) == 0) then "</span> +</span><br><span class="line">                <span class="string">"return nil;"</span> +</span><br><span class="line">            <span class="string">"end; "</span> +</span><br><span class="line">            <span class="comment">// 当前线程释放锁，锁重入-1</span></span><br><span class="line">            <span class="string">"local counter = redis.call('hincrby', KEYS[1], ARGV[3], -1); "</span> +</span><br><span class="line">            <span class="comment">// 还未完全释放，重置有效时间</span></span><br><span class="line">            <span class="string">"if (counter &gt; 0) then "</span> +</span><br><span class="line">                <span class="string">"redis.call('pexpire', KEYS[1], ARGV[2]); "</span> +</span><br><span class="line">                <span class="string">"return 0; "</span> +</span><br><span class="line">            <span class="comment">// 释放锁 并发布消息</span></span><br><span class="line">            <span class="string">"else "</span> +</span><br><span class="line">                <span class="string">"redis.call('del', KEYS[1]); "</span> +</span><br><span class="line">                <span class="string">"redis.call('publish', KEYS[2], ARGV[1]); "</span> +</span><br><span class="line">                <span class="string">"return 1; "</span>+</span><br><span class="line">            <span class="string">"end; "</span> +</span><br><span class="line">            <span class="string">"return nil;"</span>,</span><br><span class="line">            Arrays.&lt;Object&gt;asList(getName(), getChannelName()), LockPubSub.unlockMessage, internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RedissonRedLock类"><a href="#RedissonRedLock类" class="headerlink" title="RedissonRedLock类"></a>RedissonRedLock类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// redlock的实现，将多个锁当作一个锁管理</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedissonRedLock</span> <span class="keyword">extends</span> <span class="title">RedissonMultiLock</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 构造方法是传入多个RLock对象，表示多个redis节点获取锁	</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedissonRedLock</span><span class="params">(RLock... locks)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(locks);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 允许获取失败的最大节点数</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">failedLocksLimit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> locks.size() - minLocksAmount(locks);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取锁成功要求的最小节点数</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">minLocksAmount</span><span class="params">(<span class="keyword">final</span> List&lt;RLock&gt; locks)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> locks.size()/<span class="number">2</span> + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        unlockInner(locks);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isLockFailed</span><span class="params">(Future&lt;Boolean&gt; future)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isAllLocksAcquired</span><span class="params">(AtomicReference&lt;RLock&gt; lockedLockHolder, AtomicReference&lt;Throwable&gt; failed, Queue&lt;RLock&gt; lockedLocks)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (lockedLockHolder.get() == <span class="keyword">null</span> &amp;&amp; failed.get() == <span class="keyword">null</span>) || lockedLocks.size() &gt;= minLocksAmount(locks);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RedissonMultiLock"><a href="#RedissonMultiLock" class="headerlink" title="RedissonMultiLock"></a>RedissonMultiLock</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将多个锁作为一个锁管理</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedissonMultiLock</span> <span class="keyword">implements</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 锁集合</span></span><br><span class="line">    <span class="keyword">final</span> List&lt;RLock&gt; locks = <span class="keyword">new</span> ArrayList&lt;RLock&gt;();</span><br><span class="line">    <span class="comment">// 构造方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedissonMultiLock</span><span class="params">(RLock... locks)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (locks.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Lock objects are not defined"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.locks.addAll(Arrays.asList(locks));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// other code</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 获取锁逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> waitTime, <span class="keyword">long</span> leaseTime, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> newLeaseTime = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (leaseTime != -<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 将锁的有效时长设置为2倍的等待时长</span></span><br><span class="line">        <span class="comment">// 真正传入的有效时长最后设置</span></span><br><span class="line">        newLeaseTime = waitTime * <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 当前时间点</span></span><br><span class="line">    <span class="keyword">long</span> time = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">long</span> remainTime = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (waitTime != -<span class="number">1</span>) &#123;</span><br><span class="line">        remainTime = unit.toMillis(waitTime);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 允许获取失败的最大节点数</span></span><br><span class="line">    <span class="keyword">int</span> failedLocksLimit = failedLocksLimit();</span><br><span class="line">    <span class="comment">// 成功获取到锁的集合</span></span><br><span class="line">    List&lt;RLock&gt; lockedLocks = <span class="keyword">new</span> ArrayList&lt;RLock&gt;(locks.size());</span><br><span class="line">    <span class="comment">// 遍历锁对象</span></span><br><span class="line">    <span class="keyword">for</span> (ListIterator&lt;RLock&gt; iterator = locks.listIterator(); iterator.hasNext();) &#123;</span><br><span class="line">        RLock lock = iterator.next();</span><br><span class="line">        <span class="keyword">boolean</span> lockAcquired;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (waitTime == -<span class="number">1</span> &amp;&amp; leaseTime == -<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// 无有效时间要求的锁获取</span></span><br><span class="line">                lockAcquired = lock.tryLock();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 设置等待时间</span></span><br><span class="line">                <span class="keyword">long</span> awaitTime = unit.convert(remainTime, TimeUnit.MILLISECONDS);</span><br><span class="line">                <span class="comment">// 实际调用RedissonLock的tryLock方法</span></span><br><span class="line">                <span class="comment">// 当获取锁后的时间点与初识时间点的差小于awaitTime 便视作获取锁失败</span></span><br><span class="line">                lockAcquired = lock.tryLock(awaitTime, newLeaseTime, unit);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            lockAcquired = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (lockAcquired) &#123;</span><br><span class="line">            <span class="comment">// 获取锁成功则加入集合</span></span><br><span class="line">            lockedLocks.add(lock);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 获取锁失败</span></span><br><span class="line">            <span class="comment">// 获取成功的节点已达到要求，不再尝试</span></span><br><span class="line">            <span class="keyword">if</span> (locks.size() - lockedLocks.size() == failedLocksLimit()) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (failedLocksLimit == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 允许获取失败的节点为0，则此时整个获取锁的操作失败</span></span><br><span class="line">                unlockInner(lockedLocks);</span><br><span class="line">                <span class="keyword">if</span> (waitTime == -<span class="number">1</span> &amp;&amp; leaseTime == -<span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                failedLocksLimit = failedLocksLimit();</span><br><span class="line">                lockedLocks.clear();</span><br><span class="line">                <span class="comment">// reset iterator</span></span><br><span class="line">                <span class="keyword">while</span> (iterator.hasPrevious()) &#123;</span><br><span class="line">                    iterator.previous();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 一个节点失败，允许的失败节点数减1</span></span><br><span class="line">                failedLocksLimit--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (remainTime != -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">// 计算剩余可等待时长</span></span><br><span class="line">            remainTime -= (System.currentTimeMillis() - time);</span><br><span class="line">            <span class="comment">// 重置开始时间点</span></span><br><span class="line">            time = System.currentTimeMillis();</span><br><span class="line">            <span class="comment">// 超出可等待时长</span></span><br><span class="line">            <span class="keyword">if</span> (remainTime &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                unlockInner(lockedLocks);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 要求的锁有效时间不为永久</span></span><br><span class="line">    <span class="keyword">if</span> (leaseTime != -<span class="number">1</span>) &#123;</span><br><span class="line">        List&lt;RFuture&lt;Boolean&gt;&gt; futures = <span class="keyword">new</span> ArrayList&lt;RFuture&lt;Boolean&gt;&gt;(lockedLocks.size());</span><br><span class="line">        <span class="comment">// 遍历设置锁的有效时间</span></span><br><span class="line">        <span class="keyword">for</span> (RLock rLock : lockedLocks) &#123;</span><br><span class="line">            RFuture&lt;Boolean&gt; future = rLock.expireAsync(unit.toMillis(leaseTime), TimeUnit.MILLISECONDS);</span><br><span class="line">            futures.add(future);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (RFuture&lt;Boolean&gt; rFuture : futures) &#123;</span><br><span class="line">            rFuture.syncUninterruptibly();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>可以看到，redisson不仅实现了常规方案的分布式锁，还根据redlock算法实现了进一步更有效安
+全的分布式锁。所以想用redis实现分布式锁，其实直接用redisson就行了。
+当然，redlock算法其实也有争议，主要是因为多个节点获取锁虽然能够避免单节点服务挂掉及主从
+复制导致的锁信息丢失，但也有可能出现节点间锁信息不一致的问题。具体可以看看参考链接。</code></pre><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><blockquote>
+<p><a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">Distributed locks with Redis</a><br><a href="https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener">How to do distributed locking</a><br><a href="http://antirez.com/news/101" target="_blank" rel="noopener">Is Redlock safe?</a><br><a href="https://www.jianshu.com/p/7e47a4503b87" target="_blank" rel="noopener">Redlock：Redis分布式锁最牛逼的实现</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>RF
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rel-fly.com/2021/05/01/redis-distributed-lock/" title="reids-分布式锁">https://rel-fly.com/2021/05/01/redis-distributed-lock/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/redis/" rel="tag"><i class="fa fa-tag"></i> redis</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="tag"><i class="fa fa-tag"></i> 分布式锁</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/27/dfs-algorithms/" rel="prev" title="算法笔记-深度优先搜索">
+      <i class="fa fa-chevron-left"></i> 算法笔记-深度优先搜索
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2093/02/12/helloworld/" rel="next" title="Hello World">
+      Hello World <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常规方案"><span class="nav-number">2.</span> <span class="nav-text">常规方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方案一"><span class="nav-number">2.1.</span> <span class="nav-text">方案一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案二"><span class="nav-number">2.2.</span> <span class="nav-text">方案二</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redlock算法"><span class="nav-number">3.</span> <span class="nav-text">Redlock算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算法思路"><span class="nav-number">3.1.</span> <span class="nav-text">算法思路</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#redisson"><span class="nav-number">4.</span> <span class="nav-text">redisson</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RLock类"><span class="nav-number">4.1.</span> <span class="nav-text">RLock类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RedissonLock类"><span class="nav-number">4.2.</span> <span class="nav-text">RedissonLock类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RedissonRedLock类"><span class="nav-number">4.3.</span> <span class="nav-text">RedissonRedLock类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RedissonMultiLock"><span class="nav-number">4.4.</span> <span class="nav-text">RedissonMultiLock</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">RF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/RelFly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;RelFly" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RF</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">45k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">41 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
