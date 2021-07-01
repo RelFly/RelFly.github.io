@@ -230,7 +230,7 @@ DelayQueue就无法处理。肯定会有大量的任务超时。我的想法是�
   <entry>
     <title>进程和线程</title>
     <url>/2020/06/25/ProcessAndThread1/</url>
-    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  面试中有被问道进程和线程的问题，这个平时看得比较少，这里做一个简单的总结。</p>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  面试中有被问到进程和线程的问题，这个平时看得比较少，这里做一个简单的总结。</p>
 <a id="more"></a>
 
 <h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>  进程：资源分配的基本单位，由进程控制块(Process Control Block, PCB)描述他的基本信息和运行状态<br>  线程：独立调度的基本单位，一个进程可以有多个线程，且这些线程共享进程的资源和数据</p>
@@ -937,7 +937,7 @@ result 00000000 00000000 00000000 00000110 =&gt; 6</code></pre>]]></content>
 </ol>
 <h5 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h5><img src="/image/innoDBLock/InnoDBLock3.png" class="" title="事务隔离级别">
 
-<h4 id="InnoDB的锁模式"><a href="#InnoDB的锁模式" class="headerlink" title="InnoDB的锁模式"></a>InnoDB的锁模式</h4><p>  InnoDB行级锁是针对索引的索引项加锁，也叫记录锁。如果某个sql没有用到索引，那么就会使用聚集索引。<br>  在聚集索引的所有索引项上加锁(类似表级锁)，MySQL之后会进行优化，释放掉不符合条件的索引项的锁。但<br>  这个加锁和释放的过程仍然执行了，所以要保证sql尽量用到索引。</p>
+<h4 id="InnoDB的锁模式"><a href="#InnoDB的锁模式" class="headerlink" title="InnoDB的锁模式"></a>InnoDB的锁模式</h4><p>  InnoDB行级锁是针对索引的索引项加锁，也叫记录锁。如果某个sql没有用到索引，那么就会使用聚集索引。<br>  在聚集索引的所有索引项上加锁(类似表级锁)，MySQL之后会进行优化，释放掉不符合条件的索引项的锁。<br>  但这个加锁和释放的过程仍然执行了，所以要保证sql尽量用到索引。</p>
 <h5 id="共享锁与排他锁"><a href="#共享锁与排他锁" class="headerlink" title="共享锁与排他锁"></a>共享锁与排他锁</h5><pre><code>共享锁(s)：读锁，允许一个事务读一行，并阻止其他事务获取相同数据集的排他锁
 排他锁(x)：写锁，允许一个事务读/写一行，并阻止其他事务获取相同数据集的排他锁和共享锁
 updat，insert，delete操作会自动加排他锁，而select默认不加锁，在串行读下会加共享锁</code></pre><h5 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h5><pre><code>意向锁属于表级锁，由数据库完成其申请操作，分为意向共享锁和意向排他锁。
@@ -979,11 +979,10 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
 保证前后读取的数据一致性(所以这里也可以防止幻读)</code></pre></li>
 <li>串行读：select加共享锁，读写互斥</li>
 </ol>
-<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>  产生死锁的原因主要就是加锁的顺序不一样，因为MySql的加锁是对符合条件的数据逐行加锁。这就会导致<br>  两个事务持有对方需要的锁，导致互相等待，形成死锁</p>
+<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>  产生死锁的原因主要就是加锁的顺序不一样，因为MySql的加锁是对符合条件的数据逐行加锁。<br>  这就会导致两个事务持有对方需要的锁，导致互相等待，形成死锁</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>  关于MySql-InnoDB锁的相关知识点，对于基本的行锁的概念和作用其实很好理解，包括事务隔离级别及其避
 免的并发问题，不过在我阅读相关博客时，对一些细节始终没有找到准确的答案，比如ReadView的具体实现方
-式，间隙锁
-的具体情况下的加锁操作。这些之后需要找些相关书籍确定答案，这里就还是做一下小结：
+式，间隙锁的具体情况下的加锁操作。这些之后需要找些相关书籍确定答案，这里就还是做一下小结：
 1.InnoDB的默认事务隔离级别是可重复读，写操作会涉及锁的加载和释放。所以合理的sql操作及索引配置能
   够有效减小开销及死锁的风险。这也是sql的优化的一个方向。(所以索引对于sql优化很重要)
 2.MVCC的版本控制思想是解决并发问题的常用办法，例如：CAS解决aba问题就是添加版本号的方式
@@ -1136,7 +1135,7 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
 <h3 id="state"><a href="#state" class="headerlink" title="state"></a>state</h3><p>  state是一个计数值，用来表示同步状态，state&gt;0表示占用了锁，等于0则释放锁，像CountDownLatch中就是用state的值来判断是否释放锁唤醒等待线程。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// state属性</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> state;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回当前的state值，因为state是volatile修饰的，所以每次都是读的主存</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getState</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> state;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置state值，同样基于volatile是直接写的主存</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(<span class="keyword">int</span> newState)</span> </span>&#123;</span><br><span class="line">    state = newState;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用CAS方式修改state</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">compareAndSetState</span><span class="params">(<span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// See below for intrinsics setup to support this</span></span><br><span class="line">    <span class="keyword">return</span> unsafe.compareAndSwapInt(<span class="keyword">this</span>, stateOffset, expect, update);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="FIFO队列"><a href="#FIFO队列" class="headerlink" title="FIFO队列"></a>FIFO队列</h3><p>  除了使用state表示同步状态，AQS还维护了一个FIFO队列来存储等待的线程信息，直到state==0，才会唤醒头节点的线程。</p>
+<h3 id="FIFO队列"><a href="#FIFO队列" class="headerlink" title="FIFO队列"></a>FIFO队列</h3><p>  除了使用state表示同步状态，AQS还维护了一个FIFO队列来存储等待的线程信息。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 队列节点Node类</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 共享标记</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Node SHARED = <span class="keyword">new</span> Node();</span><br><span class="line">    <span class="comment">// 独占标记</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Node EXCLUSIVE = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// waitStatus值，表示取消状态，线程不会再参与竞争</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CANCELLED =  <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// waitStatus值，表示后继线程需要出列</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIGNAL    = -<span class="number">1</span>;</span><br><span class="line">    <span class="comment">// waitStatus值，当前线程正在等待</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CONDITION = -<span class="number">2</span>;</span><br><span class="line">    <span class="comment">// waitStatus值，表示下一次的共享式同步状态的获取应无条件传播</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PROPAGATE = -<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待状态</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">int</span> waitStatus;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 上一节点</span></span><br><span class="line">    <span class="keyword">volatile</span> Node prev;</span><br><span class="line">    <span class="comment">// 下一节点</span></span><br><span class="line">    <span class="keyword">volatile</span> Node next;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 节点所属线程</span></span><br><span class="line">    <span class="keyword">volatile</span> Thread thread;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 维护条件队列的节点或者存独占/共享模式的标识</span></span><br><span class="line">    Node nextWaiter;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isShared</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> nextWaiter == SHARED;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回上一个节点，为空则抛出空指针</span></span><br><span class="line">    <span class="function"><span class="keyword">final</span> Node <span class="title">predecessor</span><span class="params">()</span> <span class="keyword">throws</span> NullPointerException </span>&#123;</span><br><span class="line">        Node p = prev;</span><br><span class="line">        <span class="keyword">if</span> (p == <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Used to establish initial head or SHARED marker</span></span><br><span class="line">    Node() &#123;   </span><br><span class="line">    &#125;</span><br><span class="line">    Node(Thread thread, Node mode) &#123;     <span class="comment">// Used by addWaiter</span></span><br><span class="line">        <span class="comment">// 独占/共享失败时调用addWaiter()，通过入参设置独占/共享标识</span></span><br><span class="line">        <span class="keyword">this</span>.nextWaiter = mode;</span><br><span class="line">        <span class="keyword">this</span>.thread = thread;</span><br><span class="line">    &#125;</span><br><span class="line">    Node(Thread thread, <span class="keyword">int</span> waitStatus) &#123; <span class="comment">// Used by Condition</span></span><br><span class="line">        <span class="keyword">this</span>.waitStatus = waitStatus;</span><br><span class="line">        <span class="keyword">this</span>.thread = thread;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>  从Node类可以看到，每一个节点都保存了对应线程信息并维护了一个waitStatus信息来判断如何操作。<br>  并且每一个节点都指向了他的前一节点和后一节点，可以看出这个队列是一个双向队列。</p>
@@ -1228,7 +1227,7 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
 
 <h4 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 新增操作</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Integer value)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 校验，不让插重复值</span></span><br><span class="line">    <span class="keyword">if</span> (find(value)) &#123;</span><br><span class="line">        System.out.println(<span class="string">"值已存在"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 1. 随机计算新节点层次</span></span><br><span class="line">    <span class="keyword">int</span> currentMaxLevel = randomLevel();</span><br><span class="line">    <span class="comment">// 2. 遍历每一层插入节点</span></span><br><span class="line">    <span class="comment">// 2.1 判断当前最大层次是否满足</span></span><br><span class="line">    <span class="keyword">if</span> (currentMaxLevel &gt; maxLevel) &#123;</span><br><span class="line">        <span class="keyword">for</span> (; maxLevel &lt; currentMaxLevel; maxLevel++) &#123;</span><br><span class="line">            SkipListNode newHead = <span class="keyword">new</span> SkipListNode(maxLevel + <span class="number">1</span>, <span class="keyword">null</span>);</span><br><span class="line">            newHead.setDown(head);</span><br><span class="line">            head = newHead;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2.2 取头节点作为游标</span></span><br><span class="line">    SkipListNode cursorHeadNode = head;</span><br><span class="line">    <span class="comment">// 2.3 新建节点</span></span><br><span class="line">    SkipListNode newNode = <span class="keyword">new</span> SkipListNode(maxLevel, value);</span><br><span class="line">    <span class="comment">// 2.4 循环处理</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = maxLevel; i &gt; <span class="number">0</span>; i--) &#123;</span><br><span class="line">        SkipListNode cursorNode = cursorHeadNode.getNext();</span><br><span class="line">        <span class="comment">// 当前层次大于新建节点最大层次，下降一层并跳过</span></span><br><span class="line">        <span class="keyword">if</span> (i &gt; currentMaxLevel) &#123;</span><br><span class="line">            cursorHeadNode = cursorHeadNode.getDown();</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 当前层次遍历</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 头节点的下一节点为空</span></span><br><span class="line">            <span class="keyword">if</span> (cursorNode == <span class="keyword">null</span>) &#123;</span><br><span class="line">                cursorHeadNode.setNext(newNode);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 第一个节点值比新增值大</span></span><br><span class="line">            <span class="keyword">if</span> (cursorNode.getValue() &gt; value) &#123;</span><br><span class="line">                cursorHeadNode.setNext(newNode);</span><br><span class="line">                newNode.setNext(cursorNode);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cursorNode.getValue() &lt; value) &#123;</span><br><span class="line">                <span class="keyword">if</span> (cursorNode.getNext() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 跟在最后一个节点后面</span></span><br><span class="line">                    cursorNode.setNext(newNode);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (cursorNode.getNext().getValue() &gt; value) &#123;</span><br><span class="line">                    <span class="comment">// 插入两者中间</span></span><br><span class="line">                    newNode.setNext(cursorNode.getNext());</span><br><span class="line">                    cursorNode.setNext(newNode);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 移动到下一节点</span></span><br><span class="line">            <span class="keyword">if</span> (cursorNode.getNext().getValue() &lt; value) &#123;</span><br><span class="line">                cursorNode = cursorNode.getNext();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cursorHeadNode = cursorHeadNode.getDown();</span><br><span class="line">        <span class="comment">// 设置新节点的下一节点</span></span><br><span class="line">        SkipListNode nextNewNode = <span class="keyword">new</span> SkipListNode(i - <span class="number">1</span>, value);</span><br><span class="line">        newNode.setDown(nextNewNode);</span><br><span class="line">        newNode = nextNewNode;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">1</span>) &#123;</span><br><span class="line">            size++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">find</span><span class="params">(Integer value)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 游标节点</span></span><br><span class="line">    SkipListNode cursorNode = head;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 游标为null，终止遍历</span></span><br><span class="line">        <span class="keyword">if</span> (cursorNode == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 头节点为虚节点，所以取下一节点为当前节点与入参做比较</span></span><br><span class="line">        <span class="comment">// 或 已经比较过的节点作为游标，所以也是取他的下一节点做比较</span></span><br><span class="line">        SkipListNode currentNode = cursorNode.getNext();</span><br><span class="line">        <span class="keyword">if</span> (currentNode == <span class="keyword">null</span>) &#123;</span><br><span class="line">            cursorNode = cursorNode.getDown();</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 比较当前节点与入参的值</span></span><br><span class="line">        <span class="keyword">if</span> (currentNode.getValue().equals(value)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (currentNode.getValue() &gt; value) &#123;</span><br><span class="line">            <span class="comment">// 当前节点大，游标移动到下一层</span></span><br><span class="line">            cursorNode = cursorNode.getDown();</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (currentNode.getValue() &lt; value) &#123;</span><br><span class="line">            <span class="comment">// 当前节点小，下一节点为空，则移动到下一层</span></span><br><span class="line">            <span class="keyword">if</span> (currentNode.getNext() == <span class="keyword">null</span>) &#123;</span><br><span class="line">                cursorNode = currentNode.getDown();</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前节点小，下一节点不为空但比入参大，移动到下一层</span></span><br><span class="line">            <span class="keyword">if</span> (currentNode.getNext().getValue() &gt; value) &#123;</span><br><span class="line">                cursorNode = currentNode.getDown();</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 当前节点小，下一节点不为空且也比入参小，游标移动到下一节点</span></span><br><span class="line">            <span class="keyword">if</span> (currentNode.getNext().getValue() &lt; value) &#123;</span><br><span class="line">                cursorNode = currentNode.getNext();</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>  以一个个节点实现跳表逻辑的时候发现相比用数组维护同一值的结构，操作要复杂一些。因为会涉及节点的比较及右移，下移。<br>  不过一步一步的实现起来也是对逻辑能力的一种锻炼。<br>  由于时间问题，只实现了插入和查询方法，而且感觉应该还有许多可以优化的地方，就等之后有时间在思考吧。</p>
+<p>  以一个个节点实现跳表逻辑的时候发现相比用数组维护同一值的结构，操作要复杂一些。因为会涉及节点的比较及右移，下移。</p>
 <h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">skipListTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    SkipList list = <span class="keyword">new</span> SkipList();</span><br><span class="line">    list.insert(<span class="number">1</span>);</span><br><span class="line">    list.insert(<span class="number">5</span>);</span><br><span class="line">    list.insert(<span class="number">9</span>);</span><br><span class="line">    list.insert(<span class="number">12</span>);</span><br><span class="line">    list.insert(<span class="number">3</span>);</span><br><span class="line">    list.insert(<span class="number">34</span>);</span><br><span class="line">    list.insert(<span class="number">20</span>);</span><br><span class="line">    list.insert(<span class="number">11</span>);</span><br><span class="line">    list.insert(<span class="number">6</span>);</span><br><span class="line">    list.insert(<span class="number">8</span>);</span><br><span class="line">    list.insert(<span class="number">2</span>);</span><br><span class="line">    list.insert(<span class="number">4</span>);</span><br><span class="line">    list.insert(<span class="number">33</span>);</span><br><span class="line">    list.insert(<span class="number">21</span>);</span><br><span class="line">    list.insert(<span class="number">19</span>);</span><br><span class="line">    list.insert(<span class="number">25</span>);</span><br><span class="line">    list.insert(<span class="number">72</span>);</span><br><span class="line">    list.insert(<span class="number">13</span>);</span><br><span class="line">    list.insert(<span class="number">15</span>);</span><br><span class="line">    list.insert(<span class="number">7</span>);</span><br><span class="line">    list.insert(<span class="number">32</span>);</span><br><span class="line">    logger.info(<span class="string">"size;&#123;&#125;"</span>, list.getSize());</span><br><span class="line">    list.showData();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <img src="/image/skiplist/skiplist2.png" class="" title="测试结果">
@@ -1985,6 +1984,158 @@ fast节点每次也只遍历一个节点，这时，当fast与slow第二次相�
       <tags>
         <tag>redis</tag>
         <tag>分布式锁</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis持久化总结</title>
+    <url>/2021/05/03/redis-persistence/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><pre><code>本章对redis持久化相关内容进行一下总结。</code></pre><a id="more"></a>
+
+<h3 id="持久化方案"><a href="#持久化方案" class="headerlink" title="持久化方案"></a>持久化方案</h3><ol>
+<li>RDB：Redis DataBase redis数据库，会按指定的时间间隔将数据生成快照文件存储在硬盘等介质中</li>
+<li>AOF：Append Only File 仅附加文件，记录服务器接受的写指令，可以在服务器重启时执行这些命令用以恢复数据。</li>
+<li>无持久化</li>
+<li>RDB+AOF两者结合使用</li>
+</ol>
+<h3 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h3><h4 id="执行方式"><a href="#执行方式" class="headerlink" title="执行方式"></a>执行方式</h4><pre><code>redis会fork一个子进程按照时间间隔来进行持久化操作，主进程不受影响，所以可以保证redis本身
+的性能。</code></pre><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ol>
+<li>RDB可以按照时间间隔备份不同时间点的数据，可以更灵活的选择数据还原的版本</li>
+<li>其执行方式决定了他可以更好的保证redis本身的高性能</li>
+<li>相比AOF，在恢复数据时可以在保证速度的前提下恢复大规模的数据</li>
+</ol>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ol>
+<li>RDB是按照时间间隔生成快照文件的，所以其必然会存在数据丢失的情况，无法保证数据的完整性</li>
+<li>RDB的fork操作会阻塞主进程</li>
+</ol>
+<h3 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h3><h4 id="执行方式-1"><a href="#执行方式-1" class="headerlink" title="执行方式"></a>执行方式</h4><pre><code>在开启AOF后，redis先将写命令放入缓存区，然后按照配置的策略将写命令追加到AOF文件中。
+redis提供了不同的AOF策略：
+1. 无fsync
+2. 每秒fsync(默认)
+3. 每个查询fsync
+fsync即将命令从缓存追加到文件的操作
+
+相比于RDB，AOF不可避免的问题是其文件会因为追加的命令越来越大，所以AOF提供了重写的操作
+以控制文件大小。
+其操作步骤如下：
+1. fork一个子进程创建新的文件，然后将旧文件的命令进行分析压缩存入新文件，会剔除或者合
+   并一些命令信息以减小文件大小
+2. 在1执行的过程中，主进程依然会将命令存入缓存区及追加到旧文件中，以保证数据的完整
+3. 待新文件处理完毕后，用新文件替代旧文件，然后将缓存区的命令追加到新文件中</code></pre><h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><ol>
+<li>相比RDB，AOF最明显的优点就是能保证数据的完整，不会丢失</li>
+<li>如果遇到磁盘已满或其他原因导致文件写入数据不完整，redis也提供了redis-check-aof修复</li>
+<li>AOF文件作为一个日志文件可以很方便的导出</li>
+</ol>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><ol>
+<li>AOF文件通常会大于RDB的文件</li>
+<li>恢复数据时的加载速度也会慢于RDB</li>
+</ol>
+<h3 id="混合模式"><a href="#混合模式" class="headerlink" title="混合模式"></a>混合模式</h3><h4 id="执行方式-2"><a href="#执行方式-2" class="headerlink" title="执行方式"></a>执行方式</h4><h4 id="优点-2"><a href="#优点-2" class="headerlink" title="优点"></a>优点</h4><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>一般情况下，应当使用RDB+AOF的组合当作redis持久化的方案，结合二者的优点，可以最
+大程度的保证redis数据的完整性。</code></pre>]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HashMap(jdk1.8)数组下标计算分析</title>
+    <url>/2021/05/15/hashMap2/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>   本章分析下HashMap在新增元素时为什么要选择这么计算数组下标。</p>
+<a id="more"></a>
+
+<h3 id="计算数组下标"><a href="#计算数组下标" class="headerlink" title="计算数组下标"></a>计算数组下标</h3><p>   首先，复习下数组下标的定位逻辑：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 计算key的hash值</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="keyword">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 计算数组下标 数组长度为2的倍数</span></span><br><span class="line">(n - <span class="number">1</span>) &amp; hash</span><br></pre></td></tr></table></figure>
+
+<p>  总结其逻辑就是三步：</p>
+<ol>
+<li>获取key的hashCode值 h，获取h的无符号位移16的结果</li>
+<li>1中的结果做异或运算</li>
+<li>2中重新计算hash值与数组长度n-1做与运算</li>
+</ol>
+<h4 id="为何要-h-gt-gt-gt-16"><a href="#为何要-h-gt-gt-gt-16" class="headerlink" title="为何要 h&gt;&gt;&gt;16"></a>为何要 h&gt;&gt;&gt;16</h4><p>  HashMap中数组的初始长度是16，换成二进制的话就是 </p>
+<blockquote>
+<p>0000 0000 0000 0000 0000 0000 0001 0000</p>
+</blockquote>
+<p>  那么在执行 <em>h &amp; (n-1)</em> 时候，如下：</p>
+<blockquote>
+<p>0000 0000 0000 0000 0000 0000 0000 1111  （n-1）<br>0000 0000 1010 0101 1010 0101 1100 0110  （h）</p>
+</blockquote>
+<p>  会发现这里h只有低位参与了运算，结果会相对集中<br>  所以，先将h无符号位移16位，这样可以让其高位参加运算，计算下标时会更随机</p>
+<h4 id="为何使用-计算hash"><a href="#为何使用-计算hash" class="headerlink" title="为何使用 ^ 计算hash"></a>为何使用 ^ 计算hash</h4><p>  接下来看第二步，是将h的高低位做异或运算，这里为何选择异或呢？<br>  先复习下位运算的知识：</p>
+<blockquote>
+<p>a&amp;b 先将a,b转化为二进制数，当且仅当相同位数都为1时，结果是1，否则为0<br>   即 1&amp;1 = 1； 0&amp;1，1&amp;0，0&amp;0 = 0<br>  a|b 先将a,b转化为二进制数，当且仅当相同位数都为0时，结果是0，否则为1<br>   即 0|0 = 0；  0|1，1|0，1|1 = 1<br>  a^b 先将a,b转化为二进制数，当且仅当相同位数只有一个为1时，结果是1，否则为0<br>   即 1^1，0^0 = 0； 0&amp;1，1&amp;0 = 1</p>
+</blockquote>
+<p>  很容易看出，异或的计算结果相对更加平均，而重新计算hash的目的就是为了使结果更随机，<br>  所以或运算和与运算都不太适合。</p>
+<h4 id="为何数组长度是2的N次方"><a href="#为何数组长度是2的N次方" class="headerlink" title="为何数组长度是2的N次方"></a>为何数组长度是2的N次方</h4><p>  一个数字是2的N次方，那么其二进制只有一位是1，其他位都是0.<br>  而当其减去1后，比之前1所在低的位都会为0，以16为例</p>
+<blockquote>
+<p>0000 0000 0000 0000 0000 0000 0001 0000 -&gt;16<br>  0000 0000 0000 0000 0000 0000 0000 1111 -&gt;15</p>
+</blockquote>
+<p>  当15作为二进制参与运算时，会发现不论参与计算的hash值是多少，其结果范围被限制在低位<br>  的四个1中，其效果与取模有异曲同工之妙。<br>  但是位运算的优势在于其计算速度更快，所以HashMap的数组要保持2的N次方。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>在一番分析后，感觉对HashMap计算数组下标的逻辑有了清晰的理解。
+也很佩服源码作者的智慧，设计得十分巧妙，且合理。</code></pre>]]></content>
+      <categories>
+        <category>Java</category>
+        <category>Map</category>
+      </categories>
+      <tags>
+        <tag>Java容器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>AQS独占共享模式</title>
+    <url>/2021/05/10/AQS2/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>   本章针对AQS的独占共享两种模式，通过源码分析其具体的实现逻辑。</p>
+<a id="more"></a>
+
+<h3 id="独占模式"><a href="#独占模式" class="headerlink" title="独占模式"></a>独占模式</h3><p>   独占模式即同一时间，只能允许一个线程获取锁资源。<br>   这里结合ReentrantLock分析:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// AQS中响应中断的独占模式获取方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireInterruptibly</span><span class="params">(<span class="keyword">int</span> arg)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Thread.interrupted())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</span><br><span class="line">    <span class="keyword">if</span> (!tryAcquire(arg))</span><br><span class="line">        <span class="comment">// 获取锁失败</span></span><br><span class="line">        doAcquireInterruptibly(arg);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// ReentrantLock中tryAcquire的具体实现(非公平锁)</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> nonfairTryAcquire(acquires);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">nonfairTryAcquire</span><span class="params">(<span class="keyword">int</span> acquires)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Thread current = Thread.currentThread();</span><br><span class="line">    <span class="keyword">int</span> c = getState();</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (compareAndSetState(<span class="number">0</span>, acquires)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextc = c + acquires;</span><br><span class="line">        <span class="keyword">if</span> (nextc &lt; <span class="number">0</span>) <span class="comment">// overflow</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">"Maximum lock count exceeded"</span>);</span><br><span class="line">        setState(nextc);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// AQS获取锁失败后的方法</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doAcquireInterruptibly</span><span class="params">(<span class="keyword">int</span> arg)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="comment">// 新建独占节点 使用尾插法插入队列尾部</span></span><br><span class="line">    <span class="comment">// Node.EXCLUSIVE作为新节点nextWaiter属性的值 用于标识独占节点</span></span><br><span class="line">    <span class="keyword">final</span> Node node = addWaiter(Node.EXCLUSIVE);</span><br><span class="line">    <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        	<span class="comment">// 前置节点</span></span><br><span class="line">            <span class="keyword">final</span> Node p = node.predecessor();</span><br><span class="line">            <span class="keyword">if</span> (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                <span class="comment">// 当前置节点为头节点且获取锁成功 表明锁被释放</span></span><br><span class="line">                <span class="comment">// 将当前节点设置为头节点</span></span><br><span class="line">                setHead(node);</span><br><span class="line">                p.next = <span class="keyword">null</span>; <span class="comment">// help GC</span></span><br><span class="line">                failed = <span class="keyword">false</span>;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> InterruptedException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (failed)</span><br><span class="line">            cancelAcquire(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
+      <categories>
+        <category>Java</category>
+        <category>JUC</category>
+      </categories>
+      <tags>
+        <tag>JUC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>http请求过程分析</title>
+    <url>/2021/05/16/http-request/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  本章想通过一次http请求过程，分析总结下相关的知识点。</p>
+<a id="more"></a>
+
+<h3 id="请求过程"><a href="#请求过程" class="headerlink" title="请求过程"></a>请求过程</h3><p>  先概括一下整个请求过程：</p>
+<ol>
+<li>当输入一个网址后，浏览器会进行域名解析，找到对应的IP地址</li>
+<li>浏览器通过IP找到对应服务器请求建立连接</li>
+<li>建立连接后就会发送请求给服务器</li>
+<li>服务器返回响应结果</li>
+<li>断开连接</li>
+</ol>
+<h3 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h3><p>  DNS解析会把输入的域名映射到对应的IP地址上，然后通过IP地址找到服务器。<br>  其目的就是为了方便大众使用，有规律的域名更方便用户记忆。</p>
+<blockquote>
+<p>域名系统（英文：Domain Name System，缩写：DNS）是互联网的一项服务。<br>  它作为将域名和IP地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。<br>  DNS使用UDP端口53。当前，对于每一级域名长度的限制是63个字符，域名总长度则不能超过253个字符。<br>  — 摘自百度百科</p>
+</blockquote>
+<h3 id="TCP三次握手"><a href="#TCP三次握手" class="headerlink" title="TCP三次握手"></a>TCP三次握手</h3><p>  在得到服务器IP地址后，客户端就需要发起请求连接，通过TCP三次握手与服务器建立连接。</p>
+<pre><code>第一次握手：客户端发送请求，
+           标志位SYN=1，seq=seqC(随机数)
+第二次握手：服务端响应新建连接请求，
+           标志位SYN=1，标志位ACK=1，ack=seqC+1，seq=seqS(随机数)
+第三次握手：客户端确认报文(检查ack是否正确)，确认无误后，响应请求
+           标志位ACK=1，ack=seqS+1，seq=seqC+1
+           服务端接收到报文后，同样会检查ack是否正确，无误后建立连接</code></pre><blockquote>
+<p>标志位代表TCP连接的状态，有以下六种：<br>SYN：表示请求建立一个连接）<br>URG：紧急标志<br>ACK：确认数据包的接收<br>PSH：推送标志，提高数据传输的优先级<br>RST：要求对方重新建立连接<br>FIN：表示要关闭连接</p>
+</blockquote>
+<blockquote>
+<p>为什么需要三次握手？<br>  第一次握手请求连接<br>  此时，服务端确认自己接收消息的功能没有问题<br>  第二次握手服务端响应第一次握手<br>  此时，客户端可以确认自己发送消息和接收消息的功能没有问题<br>  第三次客户端响应第二次握手<br>  此时，服务端确认自己发送消息的功能没有问题<br>  至此，双发互相确认了发送，接收功能的完好，可以创建连接开始通信</p>
+</blockquote>
+<h3 id="传输阶段"><a href="#传输阶段" class="headerlink" title="传输阶段"></a>传输阶段</h3><h3 id="TCP四次挥手"><a href="#TCP四次挥手" class="headerlink" title="TCP四次挥手"></a>TCP四次挥手</h3><img src="/image/xxxx/xxxxx.png" class="" title="xxxx">]]></content>
+      <categories>
+        <category>计算机网络</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
       </tags>
   </entry>
 </search>
