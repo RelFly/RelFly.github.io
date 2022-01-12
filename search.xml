@@ -1582,6 +1582,7 @@ updat，insert，delete操作会自动加排他锁，而select默认不加锁，
 <p>  如上两种写法就能避免这种问题。</p>
 ]]></content>
       <categories>
+        <category>ORM</category>
         <category>MyBatis</category>
       </categories>
       <tags>
@@ -2371,7 +2372,82 @@ Java的“沉重”也一直饱受诟病。
 <p>   这里可以看到，拥有与接口同名方法的结构体Pm自动与接口Method形成了实现的关系，Pm可以自动转成interface类型。<br>   但没有同名方法的NoPm则不行。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>golang的函数与Java的方法在声明定义，参数传递上都比较相似，很容易理解。
 不过因为没有Java中class，继承，实现这些概念，所以golang中的方法和接口就与Java的大不一样。
-不过从使用上来来看，这种设计确实更加简单灵活，没有Java那么紧密耦合的关系。</code></pre>]]></content>
+不过从使用上来来看，这种设计确实更加简单灵活，没有Java那么紧密耦合的关系。</code></pre><h3 id="下一章"><a href="#下一章" class="headerlink" title="下一章"></a>下一章</h3><blockquote>
+<p><a href="https://rel-fly.com/2021/12/03/golang-study-4/">Go学习笔记-for和range</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Go</category>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Go学习笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gorm单字段查询问题</title>
+    <url>/2022/01/11/gorm1/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  在使用gorm查询单个int类型的字段值时，遇到了库里有数据但是查不到的诡异情况。<br>  这里记录一下排查结果。</p>
+<a id="more"></a>
+
+<h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>  问题背景是想要查询某个状态值，新建了一个int32类型的对象接收。<br>  伪代码如下：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> status <span class="keyword">int32</span></span><br><span class="line">err := db.WithContext(ctx).Model(&amp;MyModel&#123;&#125;).Select(<span class="string">"status"</span>).</span><br><span class="line">          Where(<span class="string">"id = ?"</span>, id), sdkId).Find(&amp;status).Error</span><br></pre></td></tr></table></figure>
+
+<p>  测试结果这里查不到数据，找到日志发现sql是正常打印出来了，但是显示没查到结果。<br>  把sql复制到库里查询却能查到正常结果。</p>
+<h3 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h3><p>  开始有怀疑到是不是status类型的问题，但无法确定，为了不影响测试进度，就改为了对应的<br>  model结构体，然后通过model取到对应的值。</p>
+<p>  后来将这个问题，分享给大佬同事们，得到确定答案，就是类型问题。<br>  gorm在最后做反射的时候，没有处理int32类型，没有返回值导致的。</p>
+<h3 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h3><p>  虽然成功解决了问题，但是好奇心驱使我在大佬的指导下跟踪了下源码看了看，这个反射的类型<br>  判断到底是啥样的。</p>
+<p>  找到gorm源码文件scan.go中的Scan函数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Scan</span><span class="params">(rows *sql.Rows, db *DB, initialized <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">  columns, _ := rows.Columns()</span><br><span class="line">  values := <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="built_in">len</span>(columns))</span><br><span class="line">  db.RowsAffected = <span class="number">0</span></span><br><span class="line">  <span class="comment">// dest即接收sql结果的对象</span></span><br><span class="line">  <span class="comment">// 这里是对dest的不同类型的情况做不同的处理</span></span><br><span class="line">  <span class="keyword">switch</span> dest := db.Statement.Dest.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;, *<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;:</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">    <span class="keyword">case</span> *[]<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;:</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">    <span class="keyword">case</span> *<span class="keyword">int</span>, *<span class="keyword">int64</span>, *<span class="keyword">uint</span>, *<span class="keyword">uint64</span>, *<span class="keyword">float32</span>, *<span class="keyword">float64</span>, *<span class="keyword">string</span>, *time.Time:</span><br><span class="line">    <span class="comment">// 可以看到这里并没有int32的处理，int32会进入default</span></span><br><span class="line">      <span class="keyword">for</span> initialized || rows.Next() &#123;</span><br><span class="line">        initialized = <span class="literal">false</span></span><br><span class="line">        db.RowsAffected++</span><br><span class="line">        db.AddError(rows.Scan(dest))</span><br><span class="line">      &#125;</span><br><span class="line">  <span class="keyword">default</span>:</span><br><span class="line">  <span class="comment">// ....</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> db.RowsAffected == <span class="number">0</span> &amp;&amp; db.Statement.RaiseErrorOnNotFound &#123;</span><br><span class="line">  db.AddError(ErrRecordNotFound)</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  上述源码逻辑可以看到，基本类型除了int, int64, uint, uint64, float32, float64, string, time.Time之外的都会进入default逻辑。<br>  下面看看default的逻辑是啥样的：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">switch</span> db.Statement.ReflectValue.Kind() &#123;</span><br><span class="line"><span class="keyword">case</span> reflect.Slice, reflect.Array:</span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line"><span class="keyword">case</span> reflect.Struct:</span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  这里去除掉case中不需要关注的处理逻辑，可以看到default中也用了switch做了进一步处理，但是只处理了slice，array，struct三种类型。<br>  所以这里int32是无法取到值的。</p>
+]]></content>
+      <categories>
+        <category>ORM</category>
+        <category>gorm</category>
+      </categories>
+      <tags>
+        <tag>gorm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go学习笔记-for和range</title>
+    <url>/2021/12/03/golang-study-4/</url>
+    <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  本章来介绍下golang中for和range的用法。</p>
+<a id="more"></a>
+
+<h3 id="for的基本用法"><a href="#for的基本用法" class="headerlink" title="for的基本用法"></a>for的基本用法</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sliceA := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">    <span class="comment">// 普通for循环</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">5</span>; i++ &#123;</span><br><span class="line">        sliceA[i] = i</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  golang中for的基本用法与Java中并无二致，这里不多赘述。</p>
+<h3 id="for-amp-range"><a href="#for-amp-range" class="headerlink" title="for&amp;range"></a>for&amp;range</h3><p>  除了基本用法，golang中还提供了range关键字，进一步简化了遍历中取值的写法。</p>
+<h4 id="slice-数组的遍历"><a href="#slice-数组的遍历" class="headerlink" title="slice/数组的遍历"></a>slice/数组的遍历</h4><p>  这里看看range在对slice/数组遍历中的几种用法：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sliceA := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">5</span>)</span><br><span class="line">    <span class="comment">// for-range</span></span><br><span class="line">    <span class="comment">// i表示遍历的下标，v表示对应元素</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> sliceA &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"num1:%v,v:%v\n"</span>, i, sliceA[i])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> sliceA &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"num:%v,v:%v\n"</span>, i, v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="永动机"><a href="#永动机" class="headerlink" title="永动机"></a>永动机</h5><p>  看到range的用法时，是否会想到，如果在遍历切片时不停的向其中塞数据，会变成一个永动机吗？</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> i, v := <span class="keyword">range</span> sliceA &#123;</span><br><span class="line">    sliceA = <span class="built_in">append</span>(sliceA, i)</span><br><span class="line">    fmt.Printf(<span class="string">"yy:%v,v:%v\n"</span>, i, v)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">"sliceA:%+v\n"</span>, sliceA)</span><br></pre></td></tr></table></figure>
+
+<p>  运行后会发现，上述代码并不会一直执行下去，循环次数取决于sliceA的初始长度。</p>
+<p>  这里可以看看源码range.go文件中的walkrange函数中的处理逻辑：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这里是针对遍历切片的处理</span></span><br><span class="line"><span class="keyword">case</span> TARRAY, TSLICE:</span><br><span class="line">    <span class="keyword">if</span> arrayClear(n, v1, v2, a) &#123;</span><br><span class="line">        lineno = lno</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// order.stmt arranged for a copy of the array/slice variable if needed.</span></span><br><span class="line">    ha := a</span><br><span class="line">    hv1 := temp(types.Types[TINT])</span><br><span class="line">    <span class="comment">// 这里hn表示的是切片长度，这里初始化了，所以不会形成永动机</span></span><br><span class="line">    hn := temp(types.Types[TINT])</span><br><span class="line">    init = <span class="built_in">append</span>(init, nod(OAS, hv1, <span class="literal">nil</span>))</span><br><span class="line">    init = <span class="built_in">append</span>(init, nod(OAS, hn, nod(OLEN, ha, <span class="literal">nil</span>)))</span><br><span class="line">    n.Left = nod(OLT, hv1, hn)</span><br><span class="line">    n.Right = nod(OAS, hv1, nod(OADD, hv1, nodintconst(<span class="number">1</span>)))</span><br></pre></td></tr></table></figure>
+
+<h5 id="指针问题"><a href="#指针问题" class="headerlink" title="指针问题"></a>指针问题</h5><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sliceA := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">9</span>; i++ &#123;</span><br><span class="line">        sliceA = <span class="built_in">append</span>(sliceA, i)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> _, v := <span class="keyword">range</span> sliceA &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"value:%v\n"</span>, &amp;v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  执行上述代码会发现，输出的都是同一个地址，这也是for range循环中的一个需要注意的地方。<br>  每次循环中，v都是使用的同一个地址，所以这里赋值时不要使用&amp;v的方式，<br>  这里也可以看看源码中的处理，源码中是每次都会将遍历到的值赋值给v，v的内存地址其实是没有变化的。</p>
+<h4 id="hash遍历"><a href="#hash遍历" class="headerlink" title="hash遍历"></a>hash遍历</h4><p>  对于hash遍历需要注意的是他的不确定性：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 遍历的写法与slice遍历一样，不过这里的i表示的是map的key</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    mapA := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>, <span class="number">0</span>)</span><br><span class="line">    mapA[<span class="number">0</span>] = <span class="string">"s"</span></span><br><span class="line">    mapA[<span class="number">1</span>] = <span class="string">"h"</span></span><br><span class="line">    mapA[<span class="number">2</span>] = <span class="string">"e"</span></span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> mapA &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"key:%v,value:%v\n"</span>, i, v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>  将上述代码多执行几次，你会发现输出的顺序并不一致。<br>  如果想知道为什么，可以在源码map.go文件的mapiterinit函数中找到答案。<br>  下面是截取的部分代码：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// fastrand()会返回一个随机值</span></span><br><span class="line">r := <span class="keyword">uintptr</span>(fastrand())</span><br><span class="line"><span class="keyword">if</span> h.B &gt; <span class="number">31</span>-bucketCntBits &#123;</span><br><span class="line">    r += <span class="keyword">uintptr</span>(fastrand()) &lt;&lt; <span class="number">31</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 通过随机值设置桶的起始遍历位置</span></span><br><span class="line">it.startBucket = r &amp; bucketMask(h.B)</span><br><span class="line">it.offset = <span class="keyword">uint8</span>(r &gt;&gt; h.B &amp; (bucketCnt - <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><pre><code>golang在基本的for循环写法上，还提供了range关键字进一步简化了遍历中
+取值的写法，让遍历写起来更加高效简单。
+当然，因此也引出了类似指针地址不变的问题，需要我们在开发中多注意。</code></pre><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><blockquote>
+<p><a href="https://draveness.me/golang/docs/part2-foundation/ch05-keyword/golang-for-range/" target="_blank" rel="noopener">Go语言for和range的实现</a></p>
+</blockquote>
+]]></content>
       <categories>
         <category>Go</category>
         <category>学习笔记</category>
