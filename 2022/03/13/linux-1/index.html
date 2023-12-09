@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/rel-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/rel-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"rel-fly.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="前言  本文总结了部分个人认为在linux中比较常用的命令。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux的常用命令">
+<meta property="og:url" content="https://rel-fly.com/2022/03/13/linux-1/index.html">
+<meta property="og:site_name" content="·RelFly·">
+<meta property="og:description" content="前言  本文总结了部分个人认为在linux中比较常用的命令。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://rel-fly.com/image/xxxx/xxxxx.png">
+<meta property="article:published_time" content="2022-03-13T08:10:58.000Z">
+<meta property="article:modified_time" content="2023-12-09T15:00:34.458Z">
+<meta property="article:author" content="RF">
+<meta property="article:tag" content="linux命令">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rel-fly.com/image/xxxx/xxxxx.png">
+
+<link rel="canonical" href="https://rel-fly.com/2022/03/13/linux-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux的常用命令 | ·RelFly·</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">·RelFly·</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">随便写写</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://rel-fly.com/2022/03/13/linux-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="RF">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="·RelFly·">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux的常用命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-13 16:10:58" itemprop="dateCreated datePublished" datetime="2022-03-13T16:10:58+08:00">2022-03-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-09 23:00:34" itemprop="dateModified" datetime="2023-12-09T23:00:34+08:00">2023-12-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/%E5%91%BD%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">命令</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  本文总结了部分个人认为在linux中比较常用的命令。</p>
+<a id="more"></a>
+
+<h3 id="文件操作类"><a href="#文件操作类" class="headerlink" title="文件操作类"></a>文件操作类</h3><p>  首先来看看一些关于文件操作的命令。</p>
+<h4 id="cd-ls"><a href="#cd-ls" class="headerlink" title="cd/ls"></a>cd/ls</h4><p>  cd和ls应该是使用频率最高的两个命令，前者用来切换文件目录，后者则用来看当前目录下的文件列表。</p>
+<p>  cd比较简单：</p>
+<blockquote>
+<p>cd ~  进入home目录<br>cd -  进入上一次选择的目录<br>cd !$ 将上个命令的参数作为这次cd的参数使用，例如：上一个命令是cd -,那么随后使用cd !$ 等价于 cd -</p>
+</blockquote>
+<p>  ls相比cd就多了一些参数选择：</p>
+<blockquote>
+<p>ls -a 列出目录所有文件，包含以.开始的隐藏文件<br>ls -A 列出除.及..的其它文件<br>ls -r 反序排列<br>ls -t 以文件修改时间排序<br>ls -S 以文件大小排序<br>ls -h 以易读大小显示<br>ls -l 除了文件名之外，还将文件的权限、所有者、文件大小等信息详细列出来</p>
+</blockquote>
+<h4 id="tail-cat-grep"><a href="#tail-cat-grep" class="headerlink" title="tail/cat/grep"></a>tail/cat/grep</h4><p>  tail,cat,grep这三个命令应该是用来查看日志文件时最常用的命令组合了。</p>
+<h5 id="tail"><a href="#tail" class="headerlink" title="tail"></a>tail</h5><p>  tail是用来显示文件的部分内容，还能将文件的新增内容不断显示出来，是查看日志最好用的命令。</p>
+<blockquote>
+<p>tail [filename]  默认显示文件的最后十行内容<br>tail -f [filename] 循环读取文件内容，也就是当文件又新增内容会显示出来<br>tail -c [n] 显示最后n个字节的内容<br>tail -n [n] 显示最后n行的内容 也可以省略n直接带数字，例如：tail -n 2 等价于 tail -2<br>tail -n +[n] 显示从第n行到最后一行的内容</p>
+</blockquote>
+<h5 id="cat"><a href="#cat" class="headerlink" title="cat"></a>cat</h5><p>  cat会将整个文件的内容显示出来，但这只是其中一个用法，他还可以用来创建和合并文件：</p>
+<blockquote>
+<p>cat &gt; [filename] 从键盘创建文件<br>cat [file1] [file2] … &gt; [fileN]  将几个文件合并成一个新文件，这里多个文件名用空格隔开<br>cat -n [filename]  输出所有行并带上行号<br>cat -b [filename]  输出所有行，只对非空行带上行号</p>
+</blockquote>
+<h5 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h5><p>  grep用于过滤特定关键字的内容，通常会与tail，cat命令组合使用来从日志文件中查询想要的信息。</p>
+<blockquote>
+<p>grep [‘关键字’]  显示带有关键字的行的内容<br>grep -A [n] [‘关键字’]  显示带有关键字及之后n行的内容<br>grep -a [‘关键字’]  不忽略二进制的数据<br>grep -B [n] [‘关键字’]  显示带有关键字及之前n行的内容<br>grep -b [‘关键字’]  在显示带有关键字的内容前，标示出该行第一个字符的编号<br>grep -C [n] [‘关键字’]  显示带有关键字及前后n行的内容<br>grep -c [‘关键字’]  计算带有关键字的行数<br>grep -E [正则表达式]  可以使用正则表达式来过滤内容<br>grep -i  忽略字符大小写<br>grep -v [‘关键字’]  显示不包含关键字的行的内容<br>grep -w [‘关键字’]  显示能完整匹配关键字的行的内容<br>         例如：类似文本kjkjld,dfdjf&gt;ddd，grep -w ‘&gt;ddd’是无法匹配上的，但是 grep -w ‘ddd’可以<br>grep -x [‘关键字’]  显示整行匹配关键字的行的内容</p>
+</blockquote>
+<p>  以上只列举了grep在筛选文本中常用的参数，这只是他功能的一部分。<br>  比如说，执行命令<em>grep -r ‘kjkjld,dfdjf&gt;ddd’ /Users/rf/myproject</em>，会展示出目录/Users/rf/myproject下所有文件中带有关键字的行的内容。</p>
+<h3 id="网络通讯"><a href="#网络通讯" class="headerlink" title="网络通讯"></a>网络通讯</h3><h4 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h4><p>  ping命令通常用来测试本机与目标主机的连通性。</p>
+<blockquote>
+</blockquote>
+<h4 id="tcpdump"><a href="#tcpdump" class="headerlink" title="tcpdump"></a>tcpdump</h4><p>  tcpdump用于展示网络传输数据，常用于查询两个ip之间的传输内容，定位问题。</p>
+<blockquote>
+</blockquote>
+<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>RF
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://rel-fly.com/2022/03/13/linux-1/" title="linux的常用命令">https://rel-fly.com/2022/03/13/linux-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/linux%E5%91%BD%E4%BB%A4/" rel="tag"><i class="fa fa-tag"></i> linux命令</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/10/golang-study-5/" rel="prev" title="Go学习笔记-select和channel">
+      <i class="fa fa-chevron-left"></i> Go学习笔记-select和channel
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/08/gorm2/" rel="next" title="gorm学习笔记-模型及标签">
+      gorm学习笔记-模型及标签 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件操作类"><span class="nav-number">2.</span> <span class="nav-text">文件操作类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-ls"><span class="nav-number">2.1.</span> <span class="nav-text">cd&#x2F;ls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail-cat-grep"><span class="nav-number">2.2.</span> <span class="nav-text">tail&#x2F;cat&#x2F;grep</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#tail"><span class="nav-number">2.2.1.</span> <span class="nav-text">tail</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cat"><span class="nav-number">2.2.2.</span> <span class="nav-text">cat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#grep"><span class="nav-number">2.2.3.</span> <span class="nav-text">grep</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络通讯"><span class="nav-number">3.</span> <span class="nav-text">网络通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ping"><span class="nav-number">3.1.</span> <span class="nav-text">ping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump"><span class="nav-number">3.2.</span> <span class="nav-text">tcpdump</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">RF</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">39</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/RelFly" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;RelFly" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RF</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">61k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">55 分钟</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
