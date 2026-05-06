@@ -249,7 +249,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2026/05/06/ai-skill-guide/" class="post-title-link" itemprop="url">AI Skill 开发实战指南——让大模型真正理解并操作你的业务系统</a>
+            <a href="/2026/05/06/ai-skill-guide/" class="post-title-link" itemprop="url">AI Skill + MCP 开发实战指南——从零搭建你的第一个 AI 业务助手</a>
         </h2>
 
         <div class="post-meta">
@@ -260,7 +260,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2026-05-06 16:00:00 / 修改时间：16:08:14" itemprop="dateCreated datePublished" datetime="2026-05-06T16:00:00+08:00">2026-05-06</time>
+              <time title="创建时间：2026-05-06 16:00:00 / 修改时间：16:22:46" itemprop="dateCreated datePublished" datetime="2026-05-06T16:00:00+08:00">2026-05-06</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -278,14 +278,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
+              <span>4.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -297,7 +297,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>如果你是一名研发工程师，想让 AI Agent（如 Claude、GPT 等）能够<strong>真正理解并操作你的业务系统</strong>，你需要了解 <strong>Skill（技能）</strong> 与 <strong>MCP（Model Context Protocol，模型上下文协议）</strong> 这两个核心概念。本文基于业界实践与源码级分析，梳理一套企业级 Skill + MCP 的开发范式。</p>
+          <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>你有没有试过让 ChatGPT 直接调用你们公司的内部 API？大概率会碰壁——模型不知道你们的接口长什么样，不懂业务规则，甚至会编造不存在的参数。这就是 <strong>Skill（技能）+ MCP（Model Context Protocol）</strong> 要解决的问题组合。</p>
+<p>本文不会罗列概念定义，而是带着你从零开始，用一套完整的伪代码示例，搭建一个能真正跑通的 AI 业务助手。读完之后，你应该能够：</p>
+<ul>
+<li>理解 Skill 的加载机制和编写规则</li>
+<li>掌握 MCP 协议的核心原理与服务端开发方法</li>
+<li>用 Skill + MCP 组合完成一个端到端的业务场景</li>
+</ul>
+<p>我们选用的示例场景是：<strong>一个简单的待办事项管理助手</strong>——创建、查询、修改、删除待办，覆盖 CRUD 全流程。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2026/05/06/ai-skill-guide/#more" rel="contents">
@@ -1230,12 +1237,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">69k</span>
+    <span title="站点总字数">71k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:03</span>
+    <span title="站点阅读时长">1:05</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
