@@ -27,13 +27,11 @@
 <meta property="og:site_name" content="·RelFly·">
 <meta property="og:description" content="前言  本文总结了部分个人认为在linux中比较常用的命令。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://rel-fly.com/image/xxxx/xxxxx.png">
 <meta property="article:published_time" content="2022-03-13T08:10:58.000Z">
-<meta property="article:modified_time" content="2023-10-07T02:42:40.882Z">
+<meta property="article:modified_time" content="2026-05-06T09:26:55.020Z">
 <meta property="article:author" content="RF">
 <meta property="article:tag" content="linux命令">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://rel-fly.com/image/xxxx/xxxxx.png">
 
 <link rel="canonical" href="https://rel-fly.com/2022/03/13/linux-1/">
 
@@ -194,7 +192,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-07 10:42:40" itemprop="dateModified" datetime="2023-10-07T10:42:40+08:00">2023-10-07</time>
+                <time title="修改时间：2026-05-06 17:26:55" itemprop="dateModified" datetime="2026-05-06T17:26:55+08:00">2026-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -216,14 +214,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.5k</span>
+              <span>7.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -262,13 +260,122 @@
 <p>grep [‘关键字’]  显示带有关键字的行的内容<br>grep -A [n] [‘关键字’]  显示带有关键字及之后n行的内容<br>grep -a [‘关键字’]  不忽略二进制的数据<br>grep -B [n] [‘关键字’]  显示带有关键字及之前n行的内容<br>grep -b [‘关键字’]  在显示带有关键字的内容前，标示出该行第一个字符的编号<br>grep -C [n] [‘关键字’]  显示带有关键字及前后n行的内容<br>grep -c [‘关键字’]  计算带有关键字的行数<br>grep -E [正则表达式]  可以使用正则表达式来过滤内容<br>grep -i  忽略字符大小写<br>grep -v [‘关键字’]  显示不包含关键字的行的内容<br>grep -w [‘关键字’]  显示能完整匹配关键字的行的内容<br>         例如：类似文本kjkjld,dfdjf&gt;ddd，grep -w ‘&gt;ddd’是无法匹配上的，但是 grep -w ‘ddd’可以<br>grep -x [‘关键字’]  显示整行匹配关键字的行的内容</p>
 </blockquote>
 <p>  以上只列举了grep在筛选文本中常用的参数，这只是他功能的一部分。<br>  比如说，执行命令<em>grep -r ‘kjkjld,dfdjf&gt;ddd’ &#x2F;Users&#x2F;rf&#x2F;myproject</em>，会展示出目录&#x2F;Users&#x2F;rf&#x2F;myproject下所有文件中带有关键字的行的内容。</p>
-<h3 id="网络通讯"><a href="#网络通讯" class="headerlink" title="网络通讯"></a>网络通讯</h3><h4 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h4><p>  ping命令通常用来测试本机与目标主机的连通性。</p>
+<h3 id="网络通讯"><a href="#网络通讯" class="headerlink" title="网络通讯"></a>网络通讯</h3><h4 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h4><p>  ping 命令用于测试本机与目标主机的网络连通性，通过 ICMP 协议发送回显请求报文。</p>
 <blockquote>
+<p>ping [host]                发送 ICMP 报文测试连通性（默认持续发送，Ctrl+C 停止）<br>ping -c [n] [host]          指定发送 n 个包后停止<br>ping -i [秒数] [host]        设置发包间隔时间<br>ping -s [大小] [host]        设置数据包大小<br>ping -W [超时ms] [host]      设置单次请求的超时时间</p>
 </blockquote>
-<h4 id="tcpdump"><a href="#tcpdump" class="headerlink" title="tcpdump"></a>tcpdump</h4><p>  tcpdump用于展示网络传输数据，常用于查询两个ip之间的传输内容，定位问题。</p>
+<p>  常见场景：<code>ping -c 4 baidu.com</code> 测试到百度的网络延迟。</p>
+<h4 id="curl-wget"><a href="#curl-wget" class="headerlink" title="curl &#x2F; wget"></a>curl &#x2F; wget</h4><p>  用于在命令行中发起 HTTP 请求或下载文件。</p>
 <blockquote>
+<p>curl [url]                  获取 URL 内容并输出到标准输出<br>curl -I [url]               只获取响应头（检查 HTTP 状态码、Server 类型等）<br>curl -X POST [url] -d ‘key&#x3D;val’  发送 POST 请求<br>curl -H ‘Authorization: Bearer xxx’ [url]  携带自定义 Header<br>curl -o [filename] [url]    将响应保存为指定文件<br>wget [url]                  下载文件（自动重命名）<br>wget -c [url]               支持断点续传下载<br>wget -r [url]               递归下载整个页面及其资源（慎用）</p>
 </blockquote>
-<img src="/image/xxxx/xxxxx.png" class="" title="xxxx">
+<p>  常见场景：用 <code>curl -I https://api.example.com/health</code> 快速检查服务健康状态。</p>
+<h4 id="netstat-ss"><a href="#netstat-ss" class="headerlink" title="netstat &#x2F; ss"></a>netstat &#x2F; ss</h4><p>  查看网络连接、端口占用、路由表等信息。ss 是 netstat 的现代替代品，性能更好。</p>
+<blockquote>
+<p>ss -tlnp                   查看 TCP 监听端口及对应进程（排查端口被谁占用最常用）<br>ss -tulnp                  同时查看 TCP 和 UDP 监听端口<br>ss -an                     查看所有连接状态（含 LISTEN&#x2F;ESTABLISHED&#x2F;TIME_WAIT）<br>netstat -tlnp              功能同 ss -tlnp（老版本兼容）<br>netstat -an | grep ESTABLISHED  查看当前已建立的连接</p>
+</blockquote>
+<p>  常见场景：<code>ss -tlnp | grep :8080</code> 查看 8080 端口被哪个进程占用。</p>
+<h4 id="ssh-scp"><a href="#ssh-scp" class="headerlink" title="ssh &#x2F; scp"></a>ssh &#x2F; scp</h4><p>  远程登录和安全拷贝。</p>
+<blockquote>
+<p>ssh user@host              远程登录目标主机<br>ssh -p [port] user@host     指定端口的远程登录<br>scp [localfile] user@host:&#x2F;path&#x2F;  上传本地文件到远程主机<br>scp -r [localdir] user@host:&#x2F;path&#x2F;  上传整个目录<br>scp user@host:&#x2F;path&#x2F;file .&#x2F;      从远程主机下载文件</p>
+</blockquote>
+<p>  进阶技巧：配置 <code>~/.ssh/config</code> 后可以用别名免密码登录（配合 SSH Key）。</p>
+<h4 id="tcpdump"><a href="#tcpdump" class="headerlink" title="tcpdump"></a>tcpdump</h4><p>  抓包工具，用于分析网络传输数据包，定位通信问题。</p>
+<blockquote>
+<p>tcpdump -i eth0            抓取 eth0 网卡的所有流量<br>tcpdump -i eth0 port 8080  只抓 8080 端口的流量<br>tcpdump -i eth0 host 192.168.1.100  只抓与该 IP 的通信<br>tcpdump -i eth0 -w capture.pcap  将抓包结果保存为 pcap 文件（Wireshark 可打开分析）<br>tcpdump -A -i eth0          以 ASCII 格式显示包内容（方便看 HTTP 明文）</p>
+</blockquote>
+<p>  常见场景：<code>tcpdump -i any port 8080 -A</code> 抓取 8080 端口的 HTTP 请求明文。</p>
+<h3 id="进程管理类"><a href="#进程管理类" class="headerlink" title="进程管理类"></a>进程管理类</h3><p>  在 Linux 上排查服务异常、杀进程、查看资源占用时必不可少。</p>
+<h4 id="ps-top-htop"><a href="#ps-top-htop" class="headerlink" title="ps &#x2F; top &#x2F; htop"></a>ps &#x2F; top &#x2F; htop</h4><blockquote>
+<p>ps aux                      显示所有进程详细信息（CPU、内存、PID、启动命令）<br>ps aux | grep java           过滤出 Java 相关进程<br>ps -ef | grep nginx          另一种常用格式，显示 PPID（父进程ID）<br>top                         实时动态显示进程资源占用（按 CPU 排序，交互式界面）<br>top -u username             只显示某用户的进程<br>htop                        top 的增强版（彩色、支持鼠标操作、树形视图，需单独安装）<br>                           按 F6 可按 CPU&#x2F;内存&#x2F;PID 排列，F9 杀进程，F10 退出</p>
+</blockquote>
+<p>  常见场景：<code>ps aux --sort=-%mem | head -10</code> 找出内存占用最高的 10 个进程。</p>
+<h4 id="kill-killall"><a href="#kill-killall" class="headerlink" title="kill &#x2F; killall"></a>kill &#x2F; killall</h4><blockquote>
+<p>kill [pid]                   默认发送 SIGTERM（15），优雅终止进程<br>kill -9 [pid]               发送 SIGKILL（9），强制杀死进程（不可捕获&#x2F;忽略）<br>kill -l                      列出所有信号编号及名称<br>killall [process_name]       按进程名批量终止（如 killall java）</p>
+</blockquote>
+<p>  注意：优先使用 <code>kill</code>（SIGTERM），让进程有机会做清理工作；<code>kill -9</code> 应作为最后手段。</p>
+<h4 id="jobs-fg-bg-nohup"><a href="#jobs-fg-bg-nohup" class="headerlink" title="jobs &#x2F; fg &#x2F; bg &#x2F; nohup"></a>jobs &#x2F; fg &#x2F; bg &#x2F; nohup</h4><p>  管理前后台任务，适合长时间运行的脚本或服务。</p>
+<blockquote>
+<p>nohup command &amp;              后台运行且不受终端关闭影响（输出默认写入 nohup.out）<br>nohup command &gt; app.log 2&gt;&amp;1 &amp;  重定向输出到指定日志文件<br>jobs                        查看当前终端的后台任务列表<br>Ctrl+Z                      将前台任务暂停并放入后台（stopped 状态）<br>bg [%jobnum]                将 stopped 任务转为后台运行（bg 默认操作最后一个任务）<br>fg [%jobnum]                将后台任务调到前台继续执行</p>
+</blockquote>
+<p>  常见场景：启动一个 Java 服务——<code>nohup java -jar app.jar &gt; app.log 2&gt;&amp;1 &amp;</code></p>
+<h4 id="systemctl"><a href="#systemctl" class="headerlink" title="systemctl"></a>systemctl</h4><p>  管理系统服务（CentOS 7+ &#x2F; Ubuntu 16.04+ 使用 systemd）。</p>
+<blockquote>
+<p>systemctl status nginx        查看 Nginx 服务状态<br>systemctl start nginx         启动服务<br>systemctl stop nginx          停止服务<br>systemctl restart nginx       重启服务<br>systemctl reload nginx        重新加载配置（不中断连接）<br>systemctl enable nginx        设置开机自启<br>systemctl disable nginx       取消开机自启<br>journalctl -u nginx -f        实时查看服务的日志输出</p>
+</blockquote>
+<h3 id="磁盘与存储"><a href="#磁盘与存储" class="headerlink" title="磁盘与存储"></a>磁盘与存储</h3><h4 id="df-du-free"><a href="#df-du-free" class="headerlink" title="df &#x2F; du &#x2F; free"></a>df &#x2F; du &#x2F; free</h4><blockquote>
+<p>df -h                       以人类可读格式查看磁盘分区使用情况（看整体空间够不够）<br>df -ih                      查看 inode 使用情况（小文件过多时会耗尽 inode）<br>du -sh [dir]                查看目录总大小（定位哪个子目录占用最多空间）<br>du -sh * | sort -rh | head  查看当前目录下各子目录的大小排名<br>free -h                     查看内存使用情况（total&#x2F;used&#x2F;buff&#x2F;cache available）<br>free -m                     以 MB 为单位显示内存</p>
+</blockquote>
+<p>  常用组合：<code>du -sh /* | sort -rh | head -5</code> 快速找出根目录下最大的 5 个文件夹。</p>
+<h4 id="mount-umount"><a href="#mount-umount" class="headerlink" title="mount &#x2F; umount"></a>mount &#x2F; umount</h4><blockquote>
+<p>mount &#x2F;dev&#x2F;sdb1 &#x2F;mnt&#x2F;data   挂载磁盘分区到指定目录<br>umount &#x2F;mnt&#x2F;data            卸载挂载点<br>mount -t nfs 192.168.1.100:&#x2F;data &#x2F;mnt&#x2F;nfs  挂载 NFS 共享目录<br>df -h | grep mounted        查看已挂载的文件系统</p>
+</blockquote>
+<h4 id="fdisk-lsblk"><a href="#fdisk-lsblk" class="headerlink" title="fdisk &#x2F; lsblk"></a>fdisk &#x2F; lsblk</h4><blockquote>
+<p>lsblk                       以树形结构列出所有块设备（硬盘、分区一目了然）<br>fdisk -l                    列出所有磁盘分区的详细信息<br>fdisk &#x2F;dev&#x2F;sdb              进入交互模式对新磁盘进行分区</p>
+</blockquote>
+<h3 id="压缩与解压"><a href="#压缩与解压" class="headerlink" title="压缩与解压"></a>压缩与解压</h3><p>  Linux 下最常用的压缩格式是 <code>.tar.gz</code>（tgz），其次是 <code>.zip</code> 和 <code>.tar.bz2</code>。</p>
+<h4 id="tar（最常用）"><a href="#tar（最常用）" class="headerlink" title="tar（最常用）"></a>tar（最常用）</h4><blockquote>
+<p>tar -czvf archive.tar.gz dir&#x2F;   将目录打包并 gzip 压缩（c&#x3D;创建, z&#x3D;gzip, v&#x3D;详细, f&#x3D;文件名）<br>tar -xzvf archive.tar.gz        解压 .tar.gz 到当前目录<br>tar -czvf archive.tar.gz file1 file2 file3  打包多个文件<br>tar -tzvf archive.tar.gz       不解压，只查看压缩包内文件列表（预览）<br>tar -xzvf archive.tar.gz -C &#x2F;target&#x2F;path&#x2F;  解压到指定目录<br>tar -cjvf archive.tar.bz2 dir&#x2F;  使用 bzip2 压缩（压缩率更高，速度更慢）<br>tar -xjvf archive.tar.bz2       解压 .tar.bz2</p>
+</blockquote>
+<p>  参数记忆技巧：c&#x3D;create（创建）, x&#x3D;extract（解压）, z&#x3D;gzip, j&#x3D;bzip2, v&#x3D;verbose（显示过程）, f&#x3D;file（必须放在最后）</p>
+<h4 id="gzip-gunzip-zip-unzip"><a href="#gzip-gunzip-zip-unzip" class="headerlink" title="gzip &#x2F; gunzip &#x2F; zip &#x2F; unzip"></a>gzip &#x2F; gunzip &#x2F; zip &#x2F; unzip</h4><blockquote>
+<p>gzip [file]                   压缩单个文件（原文件会被删除，生成 .gz 文件）<br>gunzip [file].gz             解压 .gz 文件<br>zip -r archive.zip dir&#x2F;       递归打包目录为 zip（跨平台通用格式）<br>unzip archive.zip             解压 zip 文件<br>unzip -l archive.zip          不解压，只查看 zip 内文件列表<br>unzip -o archive.zip          覆盖已有文件（不询问）</p>
+</blockquote>
+<h3 id="用户与权限"><a href="#用户与权限" class="headerlink" title="用户与权限"></a>用户与权限</h3><h4 id="chmod-chown"><a href="#chmod-chown" class="headerlink" title="chmod &#x2F; chown"></a>chmod &#x2F; chown</h4><blockquote>
+<p>chmod 755 script.sh           赋予脚本执行权限（rwxr-xr-x）<br>chmod +x script.sh            同上（更直观的写法）<br>chmod -R 644 &#x2F;var&#x2F;www&#x2F;html&#x2F;   递归修改目录下所有文件的权限<br>chown user:group file         修改文件的所有者和所属组<br>chown -R www:www &#x2F;var&#x2F;www&#x2F;    递归修改目录归属（Web 服务部署时常用）</p>
+</blockquote>
+<p>  权限数字速查：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">r=4(读) w=2(写) x=1(执行)</span><br><span class="line">7 = rwx (4+2+1)</span><br><span class="line">6 = rw- (4+2)</span><br><span class="line">5 = r-x (4+1)</span><br><span class="line">4 = r--</span><br><span class="line">0 = ---</span><br><span class="line">三位分别代表：所有者 | 组用户 | 其他用户</span><br></pre></td></tr></table></figure>
+
+<h4 id="su-sudo"><a href="#su-sudo" class="headerlink" title="su &#x2F; sudo"></a>su &#x2F; sudo</h4><blockquote>
+<p>su - root                   切换到 root 用户（加载完整环境变量）<br>sudo command                 以 root 身份执行单条命令<br>sudo -u mysql command        以指定用户身份执行命令（切换用户但不需知道密码）<br>sudo visudo                 编辑 sudoers 配置文件（给普通用户分配 sudo 权限）</p>
+</blockquote>
+<h4 id="useradd-passwd"><a href="#useradd-passwd" class="headerlink" title="useradd &#x2F; passwd"></a>useradd &#x2F; passwd</h4><blockquote>
+<p>useradd -m -s &#x2F;bin&#x2F;bash newuser  创建新用户（-m 创建 home 目录，-s 指定 shell）<br>passwd [username]            设置或修改用户密码<br>userdel -r username          删除用户及 home 目录<br>groups [username]            查看用户所属的组</p>
+</blockquote>
+<h3 id="文本处理进阶"><a href="#文本处理进阶" class="headerlink" title="文本处理进阶"></a>文本处理进阶</h3><p>  除了前面提到的 cat&#x2F;grep&#x2F;tail，还有几个强大的文本处理工具。</p>
+<h4 id="find"><a href="#find" class="headerlink" title="find"></a>find</h4><blockquote>
+<p>find &#x2F;var&#x2F;log -name “<em>.log”     按名称查找文件<br>find . -type f -mtime -7        查找 7 天内修改过的文件<br>find . -type d -name “node_modules”  查找名为 node_modules 的目录<br>find . -size +100M              查找大于 100MB 的文件<br>find . -empty                   查找空文件或空目录<br>find . -perm 777               查找权限为 777 的文件（安全审计常用）<br>find . -name “</em>.log” -delete    直接删除匹配的文件（谨慎使用）<br>find &#x2F;tmp -type f -atime +30 -delete  清理 30 天以上未访问的临时文件</p>
+</blockquote>
+<h4 id="awk-sed"><a href="#awk-sed" class="headerlink" title="awk &#x2F; sed"></a>awk &#x2F; sed</h4><p>  文本处理的两大利器：awk 擅长按列处理表格化文本，sed 擅长流式替换编辑。</p>
+<h5 id="awk-—-列处理器"><a href="#awk-—-列处理器" class="headerlink" title="awk — 列处理器"></a>awk — 列处理器</h5><blockquote>
+<p>awk ‘{print $1}’ access.log     提取日志第 1 列（如 IP 地址）<br>awk ‘{print $NF}’ file         提取每行最后一列（NF &#x3D; Number of Fields）<br>awk -F ‘:’ ‘{print $1}’ &#x2F;etc&#x2F;passwd  用冒号分隔后提取第 1 列<br>awk ‘{sum+&#x3D;$1} END {print sum}’  对第一列求和<br>awk ‘$3 &gt; 100’ file            过滤第 3 列大于 100 的行<br>awk ‘&#x2F;error&#x2F;‘ file             匹配包含 error 的行（类似 grep 功能）</p>
+</blockquote>
+<h5 id="sed-—-流编辑器"><a href="#sed-—-流编辑器" class="headerlink" title="sed — 流编辑器"></a>sed — 流编辑器</h5><blockquote>
+<p>sed ‘s&#x2F;old&#x2F;new&#x2F;g’ file        全局替换文件中的字符串（不修改原文件，输出到 stdout）<br>sed -i ‘s&#x2F;old&#x2F;new&#x2F;g’ file     直接替换原文件内容（-i &#x3D; in-place）<br>sed -n ‘10,20p’ file          只打印第 10~20 行<br>sed ‘&#x2F;pattern&#x2F;d’ file         删除匹配行的内容并输出<br>sed -i ‘5d’ file              直接删除文件的第 5 行</p>
+</blockquote>
+<h4 id="sort-uniq-wc"><a href="#sort-uniq-wc" class="headerlink" title="sort &#x2F; uniq &#x2F; wc"></a>sort &#x2F; uniq &#x2F; wc</h4><blockquote>
+<p>sort file                     按字典序排序<br>sort -rn file                 按数值倒序排列<br>sort -k2 -rn file             按第 2 列数值倒序<br>uniq file                     去除连续重复行（需要先 sort 才能全局去重）<br>sort file | uniq -c           统计每个值出现的次数（常用来统计日志频率）<br>sort file | uniq -c | sort -rn | head  取出现次数最多的前几项<br>wc -l file                   统计行数<br>wc -w file                   统计单词数<br>wc -c file                   统计字节数</p>
+</blockquote>
+<h4 id="less-more-head"><a href="#less-more-head" class="headerlink" title="less &#x2F; more &#x2F; head"></a>less &#x2F; more &#x2F; head</h4><blockquote>
+<p>less [file]                  分页浏览大文件（支持上下翻页、搜索、支持二进制文件）<br>more [file]                  分页浏览基础版（不支持向上翻页）<br>head -n 20 file              查看文件前 20 行<br>head -c 1K file              查看前 1KB 内容</p>
+</blockquote>
+<p>  提示：less 中 <code>/关键字</code> 搜索，<code>q</code> 退出，<code>G</code> 跳到末尾，<code>g</code> 跳到开头。</p>
+<h3 id="系统信息与运维"><a href="#系统信息与运维" class="headerlink" title="系统信息与运维"></a>系统信息与运维</h3><h4 id="uname-hostname-uptime"><a href="#uname-hostname-uptime" class="headerlink" title="uname &#x2F; hostname &#x2F; uptime"></a>uname &#x2F; hostname &#x2F; uptime</h4><blockquote>
+<p>uname -a                     查看完整的内核版本和系统架构信息<br>hostname                     查看主机名<br>hostnamectl set-hostname newname  修改主机名（CentOS 7+&#x2F;Ubuntu）<br>uptime                      查看系统负载和运行时间（load average 很重要）</p>
+</blockquote>
+<p>  uptime 输出示例：<code>16:30:01 up 120 days, 3 users, load average: 0.15, 0.08, 0.05</code></p>
+<ul>
+<li>load average 三个数字分别是 1分钟&#x2F;5分钟&#x2F;15分钟的平均负载</li>
+<li>单核负载 &gt; 1.0 或多核 &gt; 核心数说明系统压力大</li>
+</ul>
+<h4 id="history-which-whereis"><a href="#history-which-whereis" class="headerlink" title="history &#x2F; which &#x2F; whereis"></a>history &#x2F; which &#x2F; whereis</h4><blockquote>
+<p>history                     查看最近执行的命令历史<br>history | grep docker        过滤历史命令<br>![cmd]                      重新执行上一条命令（!! 即两个感叹号）<br>!n                          重新执行历史中的第 n 条命令（从 history 编号获取）<br>which python3               查看可执行文件的路径<br>whereis nginx               查看程序的二进制、源码、手册页位置</p>
+</blockquote>
+<h4 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h4><p>  定时任务管理。</p>
+<blockquote>
+<p>crontab -e                  编辑当前用户的定时任务<br>crontab -l                  查看当前定时任务列表<br>crontab -r                  删除所有定时任务（慎用）</p>
+</blockquote>
+<p>  cron 表达式格式：<code>分 时 日 月 周 命令</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 示例</span><br><span class="line">* * * * * command              每分钟执行一次</span><br><span class="line">0 2 * * * command              每天凌晨 2 点执行</span><br><span class="line">*/15 * * * * command          每 15 分钟执行一次</span><br><span class="line">0 9 * * 1-5 command           周一到周五早上 9 点执行</span><br><span class="line">30 18 1 * * command           每月 1 号下午 6:30 执行</span><br></pre></td></tr></table></figure>
+
+<h4 id="journalctl（systemd-日志）"><a href="#journalctl（systemd-日志）" class="headerlink" title="journalctl（systemd 日志）"></a>journalctl（systemd 日志）</h4><blockquote>
+<p>journalctl -u nginx          查看 Nginx 服务的全部日志<br>journalctl -u nginx -f       实时跟踪日志（类似 tail -f）<br>journalctl -u nginx –since “2026-03-01”  查看某日期之后的日志<br>journalctl -p err            只看错误级别的日志<br>journalctl -xe               查看本次启动以来的崩溃&#x2F;失败日志（排查启动问题首选）</p>
+</blockquote>
+<blockquote>
+<p>以上命令覆盖了 Linux 运维和开发中最常见的场景，掌握这些足以应对日常工作中的大部分需求。建议结合实际项目多练多查，<code>man 命令名</code> 可以随时查阅官方文档。</p>
+</blockquote>
+
     </div>
 
     
@@ -351,7 +458,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">文件操作类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-ls"><span class="nav-number">2.1.</span> <span class="nav-text">cd&#x2F;ls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail-cat-grep"><span class="nav-number">2.2.</span> <span class="nav-text">tail&#x2F;cat&#x2F;grep</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#tail"><span class="nav-number">2.2.1.</span> <span class="nav-text">tail</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cat"><span class="nav-number">2.2.2.</span> <span class="nav-text">cat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#grep"><span class="nav-number">2.2.3.</span> <span class="nav-text">grep</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E8%AE%AF"><span class="nav-number">3.</span> <span class="nav-text">网络通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ping"><span class="nav-number">3.1.</span> <span class="nav-text">ping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump"><span class="nav-number">3.2.</span> <span class="nav-text">tcpdump</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">文件操作类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cd-ls"><span class="nav-number">2.1.</span> <span class="nav-text">cd&#x2F;ls</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tail-cat-grep"><span class="nav-number">2.2.</span> <span class="nav-text">tail&#x2F;cat&#x2F;grep</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#tail"><span class="nav-number">2.2.1.</span> <span class="nav-text">tail</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cat"><span class="nav-number">2.2.2.</span> <span class="nav-text">cat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#grep"><span class="nav-number">2.2.3.</span> <span class="nav-text">grep</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E8%AE%AF"><span class="nav-number">3.</span> <span class="nav-text">网络通讯</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ping"><span class="nav-number">3.1.</span> <span class="nav-text">ping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#curl-wget"><span class="nav-number">3.2.</span> <span class="nav-text">curl &#x2F; wget</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netstat-ss"><span class="nav-number">3.3.</span> <span class="nav-text">netstat &#x2F; ss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssh-scp"><span class="nav-number">3.4.</span> <span class="nav-text">ssh &#x2F; scp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tcpdump"><span class="nav-number">3.5.</span> <span class="nav-text">tcpdump</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">进程管理类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ps-top-htop"><span class="nav-number">4.1.</span> <span class="nav-text">ps &#x2F; top &#x2F; htop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kill-killall"><span class="nav-number">4.2.</span> <span class="nav-text">kill &#x2F; killall</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jobs-fg-bg-nohup"><span class="nav-number">4.3.</span> <span class="nav-text">jobs &#x2F; fg &#x2F; bg &#x2F; nohup</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#systemctl"><span class="nav-number">4.4.</span> <span class="nav-text">systemctl</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E4%B8%8E%E5%AD%98%E5%82%A8"><span class="nav-number">5.</span> <span class="nav-text">磁盘与存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#df-du-free"><span class="nav-number">5.1.</span> <span class="nav-text">df &#x2F; du &#x2F; free</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mount-umount"><span class="nav-number">5.2.</span> <span class="nav-text">mount &#x2F; umount</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fdisk-lsblk"><span class="nav-number">5.3.</span> <span class="nav-text">fdisk &#x2F; lsblk</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E4%B8%8E%E8%A7%A3%E5%8E%8B"><span class="nav-number">6.</span> <span class="nav-text">压缩与解压</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#tar%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">tar（最常用）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gzip-gunzip-zip-unzip"><span class="nav-number">6.2.</span> <span class="nav-text">gzip &#x2F; gunzip &#x2F; zip &#x2F; unzip</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E4%B8%8E%E6%9D%83%E9%99%90"><span class="nav-number">7.</span> <span class="nav-text">用户与权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#chmod-chown"><span class="nav-number">7.1.</span> <span class="nav-text">chmod &#x2F; chown</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#su-sudo"><span class="nav-number">7.2.</span> <span class="nav-text">su &#x2F; sudo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#useradd-passwd"><span class="nav-number">7.3.</span> <span class="nav-text">useradd &#x2F; passwd</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86%E8%BF%9B%E9%98%B6"><span class="nav-number">8.</span> <span class="nav-text">文本处理进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#find"><span class="nav-number">8.1.</span> <span class="nav-text">find</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#awk-sed"><span class="nav-number">8.2.</span> <span class="nav-text">awk &#x2F; sed</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#awk-%E2%80%94-%E5%88%97%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">8.2.1.</span> <span class="nav-text">awk — 列处理器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sed-%E2%80%94-%E6%B5%81%E7%BC%96%E8%BE%91%E5%99%A8"><span class="nav-number">8.2.2.</span> <span class="nav-text">sed — 流编辑器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sort-uniq-wc"><span class="nav-number">8.3.</span> <span class="nav-text">sort &#x2F; uniq &#x2F; wc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#less-more-head"><span class="nav-number">8.4.</span> <span class="nav-text">less &#x2F; more &#x2F; head</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF%E4%B8%8E%E8%BF%90%E7%BB%B4"><span class="nav-number">9.</span> <span class="nav-text">系统信息与运维</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#uname-hostname-uptime"><span class="nav-number">9.1.</span> <span class="nav-text">uname &#x2F; hostname &#x2F; uptime</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#history-which-whereis"><span class="nav-number">9.2.</span> <span class="nav-text">history &#x2F; which &#x2F; whereis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#crontab"><span class="nav-number">9.3.</span> <span class="nav-text">crontab</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#journalctl%EF%BC%88systemd-%E6%97%A5%E5%BF%97%EF%BC%89"><span class="nav-number">9.4.</span> <span class="nav-text">journalctl（systemd 日志）</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -414,12 +521,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">71k</span>
+    <span title="站点总字数">77k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:05</span>
+    <span title="站点阅读时长">1:10</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
