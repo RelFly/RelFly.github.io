@@ -214,7 +214,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -234,20 +234,28 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  集合是Java中较为重要的一个模块。也是我们日常使用较多的功能。容器的种类繁多，各有特点，所以只有了解掌握好各个容器的特点才能在适合的场景使用正确的容器。<br>  本章涉及的都是常用的同步容器，如ArrayList,LinkedList,HashMap等。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="持有对象"><a href="#持有对象" class="headerlink" title="持有对象"></a>持有对象</h3><p>  本书第十一章，从对象的保存引入集合概念。介绍了Java中常用的几大集合类型即迭代器等工具的使用。</p>
-<h4 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h4><pre><code>独立元素的序列，其下又分为List，Queue，Set三大类。</code></pre><h5 id="List"><a href="#List" class="headerlink" title="List"></a>List</h5><pre><code>List是一个按照插入顺序排序的集合，常用的有ArrayList和LinkedList。</code></pre><ol>
+<h4 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h4><pre><code>独立元素的序列，其下又分为List，Queue，Set三大类。
+</code></pre>
+<h5 id="List"><a href="#List" class="headerlink" title="List"></a>List</h5><pre><code>List是一个按照插入顺序排序的集合，常用的有ArrayList和LinkedList。
+</code></pre>
+<ol>
 <li><p>ArrayList：基于数组结构的集合，优势在于随机访问，但是新增和删除操作较慢。可以参考<a href="https://rel-fly.com/2020/05/26/arrayList1/">&lt;ArrayList(jdk1.8)&gt;</a></p>
 </li>
 <li><p>LinkedList：实现List接口的同时还实现了Deque(Queue的子接口)，所以可以用作栈，队列等结构。其基于双向循环链表，优势在于顺序访问及代价较低的新增和删除操作，但是随机访问较慢。</p>
 </li>
 </ol>
 <h5 id="Queue"><a href="#Queue" class="headerlink" title="Queue"></a>Queue</h5><pre><code>  Queue的大多实现遵循先进先出的规则，事物的放入顺序与取出顺序一样。因为其特点，在并发中
-起到了非常重要的作用。</code></pre><ol>
+起到了非常重要的作用。
+</code></pre>
+<ol>
 <li>PriorityQueue：优先队列，其队列规则是下一个弹出的元素是优先级最高的而不是等待时间最长(先进先出即弹出等待时间最长的)。</li>
 </ol>
-<h5 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h5><pre><code>非重复元素集合，常用作元素在集合中存在性的判断。</code></pre><ol>
+<h5 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h5><pre><code>非重复元素集合，常用作元素在集合中存在性的判断。
+</code></pre>
+<ol>
 <li><p>HashSet：底层基于HashMap存储数据，实现Set接口，所以具有Set集合的特点，不接受重复元素。其查询效率较高。</p>
 </li>
 <li><p>TreeSet：与HashSet不同的是实现了NavigableSet(SortedSet的子接口)，元素处于排序状态。</p>
@@ -255,8 +263,10 @@
 <li><p>LinkedHashSet：以插入顺序保存元素。</p>
 </li>
 </ol>
-<h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><pre><code>Map是一种对象与对象关联的设计，键值对类型能够让基于key的查询保持很高的效率。</code></pre><ol>
-<li><p>HashMap：基于数组+链表/红黑树的结构。因为键值对的特点，根据key值的查询较快，新增删除如果涉及到扩容和链表/树结构的变化代价会较大。具体可参考<a href="https://rel-fly.com/2020/05/30/hashMap1/">&lt;HashMap(jdk1.8)&gt;</a></p>
+<h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><pre><code>Map是一种对象与对象关联的设计，键值对类型能够让基于key的查询保持很高的效率。
+</code></pre>
+<ol>
+<li><p>HashMap：基于数组+链表&#x2F;红黑树的结构。因为键值对的特点，根据key值的查询较快，新增删除如果涉及到扩容和链表&#x2F;树结构的变化代价会较大。具体可参考<a href="https://rel-fly.com/2020/05/30/hashMap1/">&lt;HashMap(jdk1.8)&gt;</a></p>
 </li>
 <li><p>TreeMap：基于红黑树的结构。保持key始终处于排序状态。</p>
 </li>
@@ -268,7 +278,9 @@
 代码效率和安全性。
   书中还提到了用其他的Collection对象来完成初始化，Arrays.asList()的使用，以及集合与迭代器
 的使用等。这些留待之后单独的一一研究记录。本章只是单纯的对常用同步集合做了一个罗列，也准备之后
-挨个以源码解读的方式记录。</code></pre><blockquote>
+挨个以源码解读的方式记录。
+</code></pre>
+<blockquote>
 <p>下一章 <a href="https://rel-fly.com/2020/06/15/ThinkingInJava7/">&lt;ThinkingInJava-7&gt;</a></p>
 </blockquote>
 
@@ -417,7 +429,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

@@ -216,7 +216,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -236,10 +236,10 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  本文总结了部分个人认为在linux中比较常用的命令。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="文件操作类"><a href="#文件操作类" class="headerlink" title="文件操作类"></a>文件操作类</h3><p>  首先来看看一些关于文件操作的命令。</p>
-<h4 id="cd-ls"><a href="#cd-ls" class="headerlink" title="cd/ls"></a>cd/ls</h4><p>  cd和ls应该是使用频率最高的两个命令，前者用来切换文件目录，后者则用来看当前目录下的文件列表。</p>
+<h4 id="cd-ls"><a href="#cd-ls" class="headerlink" title="cd&#x2F;ls"></a>cd&#x2F;ls</h4><p>  cd和ls应该是使用频率最高的两个命令，前者用来切换文件目录，后者则用来看当前目录下的文件列表。</p>
 <p>  cd比较简单：</p>
 <blockquote>
 <p>cd ~  进入home目录<br>cd -  进入上一次选择的目录<br>cd !$ 将上个命令的参数作为这次cd的参数使用，例如：上一个命令是cd -,那么随后使用cd !$ 等价于 cd -</p>
@@ -248,7 +248,7 @@
 <blockquote>
 <p>ls -a 列出目录所有文件，包含以.开始的隐藏文件<br>ls -A 列出除.及..的其它文件<br>ls -r 反序排列<br>ls -t 以文件修改时间排序<br>ls -S 以文件大小排序<br>ls -h 以易读大小显示<br>ls -l 除了文件名之外，还将文件的权限、所有者、文件大小等信息详细列出来</p>
 </blockquote>
-<h4 id="tail-cat-grep"><a href="#tail-cat-grep" class="headerlink" title="tail/cat/grep"></a>tail/cat/grep</h4><p>  tail,cat,grep这三个命令应该是用来查看日志文件时最常用的命令组合了。</p>
+<h4 id="tail-cat-grep"><a href="#tail-cat-grep" class="headerlink" title="tail&#x2F;cat&#x2F;grep"></a>tail&#x2F;cat&#x2F;grep</h4><p>  tail,cat,grep这三个命令应该是用来查看日志文件时最常用的命令组合了。</p>
 <h5 id="tail"><a href="#tail" class="headerlink" title="tail"></a>tail</h5><p>  tail是用来显示文件的部分内容，还能将文件的新增内容不断显示出来，是查看日志最好用的命令。</p>
 <blockquote>
 <p>tail [filename]  默认显示文件的最后十行内容<br>tail -f [filename] 循环读取文件内容，也就是当文件又新增内容会显示出来<br>tail -c [n] 显示最后n个字节的内容<br>tail -n [n] 显示最后n行的内容 也可以省略n直接带数字，例如：tail -n 2 等价于 tail -2<br>tail -n +[n] 显示从第n行到最后一行的内容</p>
@@ -261,7 +261,7 @@
 <blockquote>
 <p>grep [‘关键字’]  显示带有关键字的行的内容<br>grep -A [n] [‘关键字’]  显示带有关键字及之后n行的内容<br>grep -a [‘关键字’]  不忽略二进制的数据<br>grep -B [n] [‘关键字’]  显示带有关键字及之前n行的内容<br>grep -b [‘关键字’]  在显示带有关键字的内容前，标示出该行第一个字符的编号<br>grep -C [n] [‘关键字’]  显示带有关键字及前后n行的内容<br>grep -c [‘关键字’]  计算带有关键字的行数<br>grep -E [正则表达式]  可以使用正则表达式来过滤内容<br>grep -i  忽略字符大小写<br>grep -v [‘关键字’]  显示不包含关键字的行的内容<br>grep -w [‘关键字’]  显示能完整匹配关键字的行的内容<br>         例如：类似文本kjkjld,dfdjf&gt;ddd，grep -w ‘&gt;ddd’是无法匹配上的，但是 grep -w ‘ddd’可以<br>grep -x [‘关键字’]  显示整行匹配关键字的行的内容</p>
 </blockquote>
-<p>  以上只列举了grep在筛选文本中常用的参数，这只是他功能的一部分。<br>  比如说，执行命令<em>grep -r ‘kjkjld,dfdjf&gt;ddd’ /Users/rf/myproject</em>，会展示出目录/Users/rf/myproject下所有文件中带有关键字的行的内容。</p>
+<p>  以上只列举了grep在筛选文本中常用的参数，这只是他功能的一部分。<br>  比如说，执行命令<em>grep -r ‘kjkjld,dfdjf&gt;ddd’ &#x2F;Users&#x2F;rf&#x2F;myproject</em>，会展示出目录&#x2F;Users&#x2F;rf&#x2F;myproject下所有文件中带有关键字的行的内容。</p>
 <h3 id="网络通讯"><a href="#网络通讯" class="headerlink" title="网络通讯"></a>网络通讯</h3><h4 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h4><p>  ping命令通常用来测试本机与目标主机的连通性。</p>
 <blockquote>
 </blockquote>
@@ -414,7 +414,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

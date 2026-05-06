@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"rel-fly.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="基本数据类型 String：键值对形式，最简单的数据类型应用场景：计数(String有自增&#x2F;递减令明令-incr&#x2F;decr key)，简单缓存 List：双向链表，按照插入顺序排序，可从左&#x2F;右插入&#x2F;弹出数据应用场景：消息队列等 Map：value值为map类型，可以处理更加复杂的数据结构应用场景：一些对象的存储等 Set：无序集合，自动排重，有交集，并集，差集等操作应用场景：适合于对多个集合数据的">
+  <meta name="description" content="基本数据类型 String：键值对形式，最简单的数据类型应用场景：计数(String有自增&#x2F;递减令明令-incr&#x2F;decr key)，简单缓存 List：双向链表，按照插入顺序排序，可从左&#x2F;右插入&#x2F;弹出数据应用场景：消息队列等 Map：value值为map类型，可以处理更加复杂的数据结构应用场景：一些对象的存储等 Set：无序集合，自动排重，有交集，并集，差">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis部分知识点梳理">
 <meta property="og:url" content="https://rel-fly.com/2020/05/24/redis1/index.html">
 <meta property="og:site_name" content="·RelFly·">
-<meta property="og:description" content="基本数据类型 String：键值对形式，最简单的数据类型应用场景：计数(String有自增&#x2F;递减令明令-incr&#x2F;decr key)，简单缓存 List：双向链表，按照插入顺序排序，可从左&#x2F;右插入&#x2F;弹出数据应用场景：消息队列等 Map：value值为map类型，可以处理更加复杂的数据结构应用场景：一些对象的存储等 Set：无序集合，自动排重，有交集，并集，差集等操作应用场景：适合于对多个集合数据的">
+<meta property="og:description" content="基本数据类型 String：键值对形式，最简单的数据类型应用场景：计数(String有自增&#x2F;递减令明令-incr&#x2F;decr key)，简单缓存 List：双向链表，按照插入顺序排序，可从左&#x2F;右插入&#x2F;弹出数据应用场景：消息队列等 Map：value值为map类型，可以处理更加复杂的数据结构应用场景：一些对象的存储等 Set：无序集合，自动排重，有交集，并集，差">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-05-24T06:28:18.000Z">
 <meta property="article:modified_time" content="2021-07-12T01:54:25.127Z">
@@ -230,13 +230,11 @@
 
       
         <h3 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h3><ol>
-<li>String：键值对形式，最简单的数据类型<br>应用场景：计数(String有自增/递减令明令-incr/decr key)，简单缓存</li>
-<li>List：双向链表，按照插入顺序排序，可从左/右插入/弹出数据<br>应用场景：消息队列等</li>
+<li>String：键值对形式，最简单的数据类型<br>应用场景：计数(String有自增&#x2F;递减令明令-incr&#x2F;decr key)，简单缓存</li>
+<li>List：双向链表，按照插入顺序排序，可从左&#x2F;右插入&#x2F;弹出数据<br>应用场景：消息队列等</li>
 <li>Map：value值为map类型，可以处理更加复杂的数据结构<br>应用场景：一些对象的存储等</li>
 <li>Set：无序集合，自动排重，有交集，并集，差集等操作<br>应用场景：适合于对多个集合数据的处理</li>
-<li>ZSet：与set类似，相比set多了一个用来排序的属性score<br>应用场景：排行榜，带有权重的数据集合等<a id="more"></a>
-
-</li>
+<li>ZSet：与set类似，相比set多了一个用来排序的属性score<br>应用场景：排行榜，带有权重的数据集合等<span id="more"></span></li>
 </ol>
 <h3 id="使用注意"><a href="#使用注意" class="headerlink" title="使用注意"></a>使用注意</h3><ol>
 <li>key的命名最好有一定规则，便于管理</li>
@@ -244,18 +242,11 @@
 <li>生命周期的设置，对热点数据的缓存生命周期应当避免过于集中，防止同一时间大量热点数据失效，请求全部直接进入数据库</li>
 </ol>
 <h3 id="线上问题及解决方案"><a href="#线上问题及解决方案" class="headerlink" title="线上问题及解决方案"></a>线上问题及解决方案</h3><ol>
-<li>数据一致性<br>问题：如何保证数据库数据与缓存数据的一致性<br>解决方案： <pre><code>1 查询时先取缓存，缓存为空取数据库并补充到缓存
-2 更新操作先清空缓存，再更新数据库并补充到缓存
-3 高并发场景下引入队列，将写操作和读操作放入队列依次执行，等待写操作完成再读</code></pre></li>
-<li>缓存雪崩<br>问题：缓存压力过大导致redis服务崩溃，请求全部进入数据库<br>解决方案： <pre><code>1 使用redis高可用方案，主从+哨兵，redis cluster等防止服务崩溃
-2 后备方案，如果服务仍然意外崩溃，及时限流&amp;降级，防止连锁问题
-3 对redis服务崩溃后的数据恢复问题，使用redis持久化</code></pre></li>
-<li>缓存穿透<br>问题：请求的key不在缓存中，绕过了缓存查数据库<br>解决方案： <pre><code>1 查不到的数据也增加一个缓存(无法解决恶意攻击的问题)
-2 使用布隆算法，识别key</code></pre></li>
-<li>缓存击穿<br>问题：热点数据key失效瞬间，大量请求直达数据库<br>解决方案： <pre><code>1 针对缓存生命周期可设置永不失效或者使用定时任务维护达到不失效的效果
-2 使用互斥锁，防止大量请求同时进入，待一个请求查询完成后重构缓存，后面的请求即可走缓存查询</code></pre></li>
-<li>并发竞争<br>问题：并发场景下，对同一个key的写操作<br>解决方案： <pre><code>1 分布式锁确保同一时间只有一个实例操作
-2 使用时间戳判断数据有效性</code></pre></li>
+<li>数据一致性<br>问题：如何保证数据库数据与缓存数据的一致性<br>解决方案：<br>      1 查询时先取缓存，缓存为空取数据库并补充到缓存<br>      2 更新操作先清空缓存，再更新数据库并补充到缓存<br>      3 高并发场景下引入队列，将写操作和读操作放入队列依次执行，等待写操作完成再读</li>
+<li>缓存雪崩<br>问题：缓存压力过大导致redis服务崩溃，请求全部进入数据库<br>解决方案：<br>      1 使用redis高可用方案，主从+哨兵，redis cluster等防止服务崩溃<br>      2 后备方案，如果服务仍然意外崩溃，及时限流&amp;降级，防止连锁问题<br>      3 对redis服务崩溃后的数据恢复问题，使用redis持久化</li>
+<li>缓存穿透<br>问题：请求的key不在缓存中，绕过了缓存查数据库<br>解决方案：<br>      1 查不到的数据也增加一个缓存(无法解决恶意攻击的问题)<br>      2 使用布隆算法，识别key</li>
+<li>缓存击穿<br>问题：热点数据key失效瞬间，大量请求直达数据库<br>解决方案：<br>      1 针对缓存生命周期可设置永不失效或者使用定时任务维护达到不失效的效果<br>      2 使用互斥锁，防止大量请求同时进入，待一个请求查询完成后重构缓存，后面的请求即可走缓存查询</li>
+<li>并发竞争<br>问题：并发场景下，对同一个key的写操作<br>解决方案：<br>      1 分布式锁确保同一时间只有一个实例操作<br>      2 使用时间戳判断数据有效性</li>
 </ol>
 <h3 id="redis持久化"><a href="#redis持久化" class="headerlink" title="redis持久化"></a>redis持久化</h3><ol>
 <li>RDB(默认方案)<br>实现方式：创建一个子进程，与父进程共享数据段，将数据写入一个临时文件，写入成功后会替换掉之前的文件<br>触发方式：在指定的时间间隔内执行了指定的操作次数<br>优点：只有一个数据文件，便于管理维护；性能较好；适用于大数据量的恢复<br>缺点：由于是在指定时间间隔内执行，存在丢失部分数据的情况</li>
@@ -407,7 +398,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

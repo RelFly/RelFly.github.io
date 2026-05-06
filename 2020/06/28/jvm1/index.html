@@ -230,7 +230,7 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  本章主要对JVM主要的知识点进行梳理总结。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="运行时区域"><a href="#运行时区域" class="headerlink" title="运行时区域"></a>运行时区域</h3><ol>
 <li>程序计数器：线程私有，是当前线程执行的字节码的行号指示器，决定命令的执行顺序</li>
@@ -250,7 +250,7 @@
 </li>
 </ol>
 <h3 id="引用类型"><a href="#引用类型" class="headerlink" title="引用类型"></a>引用类型</h3><ol>
-<li>强引用：普遍存在类似”Object o = new Object()”这种，垃圾收集器不会回收掉强引用还存在的对象</li>
+<li>强引用：普遍存在类似”Object o &#x3D; new Object()”这种，垃圾收集器不会回收掉强引用还存在的对象</li>
 <li>软引用：软引用关联的对象会在系统将要发生内存溢出前进行第二次回收，可通过SoftReference实现</li>
 <li>弱引用：弱引用关联的对象只能生存到下一次垃圾回收之前，可通过WeakReference实现</li>
 <li>虚引用：不影响对象的生存时间，只会在其被回收时收到一个系统通知，可通过PhantomReference实现</li>
@@ -423,7 +423,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

@@ -232,17 +232,13 @@
         <h3 id="索引结构-B-树"><a href="#索引结构-B-树" class="headerlink" title="索引结构-B+树"></a>索引结构-B+树</h3><h4 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h4><p>m阶B+树满足一下条件：</p>
 <ol>
 <li>根结点的分支数量[k]范围为[2，m]</li>
-<li>每个分支结点包含的分支数[x]范围为[ceil(m/2), m]</li>
-<li>分支结点的关键字数量[y]等于[x-1]，所以[y]的范围是[ceil(m/2)-1, m-1]，关键字顺序递增</li>
-<li>所有叶子结点都在同一层，且形成一个有序链表<a id="more"></a>
-
-</li>
+<li>每个分支结点包含的分支数[x]范围为[ceil(m&#x2F;2), m]</li>
+<li>分支结点的关键字数量[y]等于[x-1]，所以[y]的范围是[ceil(m&#x2F;2)-1, m-1]，关键字顺序递增</li>
+<li>所有叶子结点都在同一层，且形成一个有序链表<span id="more"></span></li>
 </ol>
 <h4 id="操作导致的结构变化"><a href="#操作导致的结构变化" class="headerlink" title="操作导致的结构变化"></a>操作导致的结构变化</h4><h5 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h5><ul>
 <li>所有节点都没有满，直接插入</li>
-<li>节点满了，将节点拆分为左右两个节点，将中间的关键字提向上一节点<pre><code>节点的拆分对性能影响较大(涉及磁盘的数据移动)，所以某些情况下会使用旋转操作代替节点拆分
-当需要拆分的叶子节点左右节点存在未满的情况(一般优先检查左节点)，会将已满的叶子节点的关
-键字分到未满的相邻节点，并替换上一级节点的关键字，确保排序正确</code></pre></li>
+<li>节点满了，将节点拆分为左右两个节点，将中间的关键字提向上一节点<br> 节点的拆分对性能影响较大(涉及磁盘的数据移动)，所以某些情况下会使用旋转操作代替节点拆分<br> 当需要拆分的叶子节点左右节点存在未满的情况(一般优先检查左节点)，会将已满的叶子节点的关<br> 键字分到未满的相邻节点，并替换上一级节点的关键字，确保排序正确</li>
 </ul>
 <h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><p>   删除根据填充因子(fill factor)判断是否变化节点</p>
 <ul>
@@ -259,22 +255,8 @@
 </ol>
 <h3 id="sql优化"><a href="#sql优化" class="headerlink" title="sql优化"></a>sql优化</h3><h4 id="执行计划explain"><a href="#执行计划explain" class="headerlink" title="执行计划explain"></a>执行计划explain</h4><p>explain命令是对sql执行的分析，主要关注type和extra两个信息：</p>
 <ul>
-<li><p>type： 使用索引的级别</p>
-<pre><code>1. all：全表扫描
-2. index：全索引扫描，通常出现在查询数据可直接在索引树中获取到，不需要获取行数据
-3. range：使用索引范围查询
-4. ref：查找条件使用了索引但是部位主键或者唯一索引，存在重复的值
-5. eq_ref：查找条件使用的索引为主键或者唯一索引
-6. const：将主键放置到where后面作为条件查询，mysql优化器能对这次查询进行优化转为一个常量</code></pre></li>
-<li><p>extra：重要补充信息</p>
-<pre><code>1. using filesort：进行额外的排序操作，无法使用索引排序
-2. using temporary：使用临时表保存中间结果，通常由于排序，分组，多表join导致
-3. using index：使用了索引覆盖，说明无需回表查询
-4. using index condition ：条件包含索引和未索引的列，优化器将首先解析索引的列，并在表中查找
-                           其他条件的行（将索引下推），MySql5.6的新特性
-5. using where：使用where中的条件来进行表扫描
-
-‘using where; using index’ 与 ‘using condition’相比前者更好</code></pre></li>
+<li>type： 使用索引的级别<br> 1. all：全表扫描<br> 2. index：全索引扫描，通常出现在查询数据可直接在索引树中获取到，不需要获取行数据<br> 3. range：使用索引范围查询<br> 4. ref：查找条件使用了索引但是部位主键或者唯一索引，存在重复的值<br> 5. eq_ref：查找条件使用的索引为主键或者唯一索引<br> 6. const：将主键放置到where后面作为条件查询，mysql优化器能对这次查询进行优化转为一个常量</li>
+<li>extra：重要补充信息<br> 1. using filesort：进行额外的排序操作，无法使用索引排序<br> 2. using temporary：使用临时表保存中间结果，通常由于排序，分组，多表join导致<br> 3. using index：使用了索引覆盖，说明无需回表查询<br> 4. using index condition ：条件包含索引和未索引的列，优化器将首先解析索引的列，并在表中查找<br>                            其他条件的行（将索引下推），MySql5.6的新特性<br> 5. using where：使用where中的条件来进行表扫描<br><br> ‘using where; using index’ 与 ‘using condition’相比前者更好</li>
 </ul>
 <h4 id="索引分析show-index-from"><a href="#索引分析show-index-from" class="headerlink" title="索引分析show index from"></a>索引分析show index from</h4><p>对表中索引的相关分析，以下是相对重要的信息：</p>
 <ul>
@@ -437,7 +419,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

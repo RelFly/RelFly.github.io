@@ -214,7 +214,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.2k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -234,7 +234,7 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  《Thinking in Java(第四版)》的第三，四章主要介绍了Java中基本的操作符及控制执行流程的相关关键字。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><p>  本书的第三章-操作符，主要介绍了Java中使用到的各种操作符。</p>
 <pre><code>1. 算术运算符：+, -, *, /, %
@@ -243,20 +243,30 @@
 4. 直接常量的类型指定：l L, f F, d D, 0x[n](16进制), 0[n](8进制) 
 5. 按位操作符：&amp;, |, ~
 6. 移位操作符：&gt;&gt;, &lt;&lt;, &gt;&gt;&gt;
-7. 条件操作符：? :</code></pre><p>  操作符比较好理解，需要注意的几点：</p>
+7. 条件操作符：? :
+</code></pre>
+<p>  操作符比较好理解，需要注意的几点：</p>
 <pre><code>1. 操作符的顺序，如果不能确定建议使用()控制。这样也能提高代码的可读性
 2. 逻辑操作符有短路的特性
 3. 按位操作符，移位操作符都是针对二进制的操作，其中对char,byte,short类型的
-   数据进行移位操作时会先转为int类型，结果也是int</code></pre><p>  关于按位操作符和移位操作符的具体信息可以参考<a href="https://rel-fly.com/2020/06/02/bitwiseOperator/">&lt;Java-位运算符&gt;</a></p>
-<h4 id="直接常量"><a href="#直接常量" class="headerlink" title="直接常量"></a>直接常量</h4><p>  某些时候，编译器可能无法确定一些直接常量的类型，就需要用到一些字符辅助。<br>  例如：Java中会将指数当作double处理，那么对于<em>float f = 1e-10;</em>，如果不使用<em>f</em> 作为后缀即<em>1e-10f</em>。就会报错，告诉我们需要将double转为float。</p>
+   数据进行移位操作时会先转为int类型，结果也是int
+</code></pre>
+<p>  关于按位操作符和移位操作符的具体信息可以参考<a href="https://rel-fly.com/2020/06/02/bitwiseOperator/">&lt;Java-位运算符&gt;</a></p>
+<h4 id="直接常量"><a href="#直接常量" class="headerlink" title="直接常量"></a>直接常量</h4><p>  某些时候，编译器可能无法确定一些直接常量的类型，就需要用到一些字符辅助。<br>  例如：Java中会将指数当作double处理，那么对于<em>float f &#x3D; 1e-10;<em>，如果不使用_f_ 作为后缀即</em>1e-10f</em>。就会报错，告诉我们需要将double转为float。</p>
 <h3 id="控制执行流程"><a href="#控制执行流程" class="headerlink" title="控制执行流程"></a>控制执行流程</h3><p>  本书的第四章，主要介绍判断，循环，跳转等流程控制的相关关键字。</p>
 <h4 id="foreach"><a href="#foreach" class="headerlink" title="foreach"></a>foreach</h4><p>  加强型for循环，作为普通for循环的替代，因为不必创建int变量对访问项计数，提高了代码的可读性。<br>  但也正是因为不用计数，所以在需要计数操作的场景下无法使用。<br>  不过书中有提到这么一个办法：</p>
 <pre><code>1. 新建一个方法创建int数组 range(int i)
-2. foreach直接调用这个方法 for(int i : range(10)){}</code></pre><p>  虽然这样可以让foreach适用更多场景，借此提高代码可读性。但是有些为了使用而使用的感觉。毕竟相对使用for，使用foreach需要先新建一个int数组，这个代价是否值得需要思量。</p>
-<h4 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h4><p>  一般我们使用break，continue都是用于跳出循环，break中断并跳出当前循环，continue中断并跳出当次循环。<br>  不过书中提到了标签，这个用的很少，所以记录一下：<br>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 标签是跟有冒号的标识符，如 a:，他作用的唯一地方是在一个迭代语句之前，作为break，continue的一个锚</span></span><br><span class="line">a:</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; <span class="number">5</span>; x++) &#123;</span><br><span class="line">    b:</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; <span class="number">4</span>; y++) &#123;</span><br><span class="line">        c:</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> z = <span class="number">0</span>; z &lt; <span class="number">3</span>; z++) &#123;</span><br><span class="line">            System.out.println(<span class="string">"start:"</span> + x + <span class="string">","</span> + y);</span><br><span class="line">            <span class="keyword">if</span> (z == <span class="number">0</span>) &#123;</span><br><span class="line">                System.out.println(<span class="string">"if:"</span> + z);</span><br><span class="line">                <span class="keyword">continue</span> a;</span><br><span class="line">                <span class="comment">// break a;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>  如上述示例代码，三层嵌套的for循环，每一个都加了一个标签。当break/continue后面跟上标签时，在中断循环后，他们会跳到标签所在的位置再继续后续操作。<br>  例如这里的<em>continue a</em>，不加标签的话会跳出当次循环继续z的自增循环，加了标签后，效果变为中断当次循环，跳到标签所在也就是最外层循环然后继续。</p>
+2. foreach直接调用这个方法 for(int i : range(10))&#123;&#125;
+</code></pre>
+<p>  虽然这样可以让foreach适用更多场景，借此提高代码可读性。但是有些为了使用而使用的感觉。毕竟相对使用for，使用foreach需要先新建一个int数组，这个代价是否值得需要思量。</p>
+<h4 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h4><p>  一般我们使用break，continue都是用于跳出循环，break中断并跳出当前循环，continue中断并跳出当次循环。<br>  不过书中提到了标签，这个用的很少，所以记录一下：<br>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 标签是跟有冒号的标识符，如 a:，他作用的唯一地方是在一个迭代语句之前，作为break，continue的一个锚</span></span><br><span class="line">a:</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> <span class="number">0</span>; x &lt; <span class="number">5</span>; x++) &#123;</span><br><span class="line">    b:</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> <span class="number">0</span>; y &lt; <span class="number">4</span>; y++) &#123;</span><br><span class="line">        c:</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">z</span> <span class="operator">=</span> <span class="number">0</span>; z &lt; <span class="number">3</span>; z++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;start:&quot;</span> + x + <span class="string">&quot;,&quot;</span> + y);</span><br><span class="line">            <span class="keyword">if</span> (z == <span class="number">0</span>) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;if:&quot;</span> + z);</span><br><span class="line">                <span class="keyword">continue</span> a;</span><br><span class="line">                <span class="comment">// break a;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>  如上述示例代码，三层嵌套的for循环，每一个都加了一个标签。当break&#x2F;continue后面跟上标签时，在中断循环后，他们会跳到标签所在的位置再继续后续操作。<br>  例如这里的<em>continue a</em>，不加标签的话会跳出当次循环继续z的自增循环，加了标签后，效果变为中断当次循环，跳到标签所在也就是最外层循环然后继续。</p>
 <pre><code>  标签一般用于多层嵌套循环中控制break，continue的跳出位置。但是实际开发中是不建议使用多层嵌套循环
-的，而且使用不善的话容易降低代码的可阅读性，需要谨慎使用。</code></pre><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>操作符与流程控制的关键字都是比较基础的知识点。所以只记录实际开发中较少使用或者没接触过的知识点。</code></pre><blockquote>
+的，而且使用不善的话容易降低代码的可阅读性，需要谨慎使用。
+</code></pre>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>  操作符与流程控制的关键字都是比较基础的知识点。所以只记录实际开发中较少使用或者没接触过的知识点。
+</code></pre>
+<blockquote>
 <p>下一章 <a href="https://rel-fly.com/2020/06/07/ThinkingInJava3/">&lt;ThinkingInJava-3&gt;</a></p>
 </blockquote>
 
@@ -405,7 +415,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

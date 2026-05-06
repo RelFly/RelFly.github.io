@@ -234,7 +234,7 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  在阅读HashMap的源码中，对许多位运算符都分不太清了。所以这里对位运算符做一个复习。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="位运算符"><a href="#位运算符" class="headerlink" title="位运算符"></a>位运算符</h3><p>  位运算符的特点是会按照二进制去进行运算，例如3&amp;5，先把3和5转化为二进制，然后每一位进行&amp;运算，得出二进制的结果</p>
 <h4 id="按位非"><a href="#按位非" class="headerlink" title="~  按位非"></a>~  按位非</h4><pre><code>运算规则： ~b 先将b转化为二进制数，对每一位进行取反
@@ -242,7 +242,9 @@ eg: ~3的计算过程
 3      00000000 00000000 00000000 00000011
 result 11111111 11111111 11111111 11111100 (负数这里为补码需要转换)
 -1     11111111 11111111 11111111 11111011 反码
-~      10000000 00000000 00000000 00000100 原码 =&gt; -4</code></pre><h4 id="移位"><a href="#移位" class="headerlink" title="移位"></a>移位</h4><h5 id="lt-lt-和-gt-gt"><a href="#lt-lt-和-gt-gt" class="headerlink" title="&lt;&lt; 和 &gt;&gt;"></a>&lt;&lt; 和 &gt;&gt;</h5><pre><code>a&lt;&lt;b 左移位操作符，将a的二进制向左移动b位，0补位，等同于乘以2的b次方 
+~      10000000 00000000 00000000 00000100 原码 =&gt; -4
+</code></pre>
+<h4 id="移位"><a href="#移位" class="headerlink" title="移位"></a>移位</h4><h5 id="和"><a href="#和" class="headerlink" title="&lt;&lt; 和 &gt;&gt;"></a>&lt;&lt; 和 &gt;&gt;</h5><pre><code>a&lt;&lt;b 左移位操作符，将a的二进制向左移动b位，0补位，等同于乘以2的b次方 
 eg： 3&lt;&lt;2=12
 3      00000000 00000000 00000000 00000011
 -&gt;     00000000 00000000 00000000 00001100
@@ -256,22 +258,32 @@ eg： -4&gt;&gt;2=-1
 -4     11111111 11111111 11111111 11111100
 -&gt;     11111111 11111111 11111111 11111111 (负数这里为补码需要转换)
 -1     11111111 11111111 11111111 11111110 反码
-~      10000000 00000000 00000000 00000001 原码 =&gt; -1</code></pre><h5 id="gt-gt-gt-无符号右移"><a href="#gt-gt-gt-无符号右移" class="headerlink" title="&gt;&gt;&gt;  无符号右移"></a>&gt;&gt;&gt;  无符号右移</h5><pre><code>类似&gt;&gt;，区别在于不管正数负数都用0补位
+~      10000000 00000000 00000000 00000001 原码 =&gt; -1
+</code></pre>
+<h5 id="无符号右移"><a href="#无符号右移" class="headerlink" title="&gt;&gt;&gt;  无符号右移"></a>&gt;&gt;&gt;  无符号右移</h5><pre><code>类似&gt;&gt;，区别在于不管正数负数都用0补位
 eg： -4&gt;&gt;&gt;2=1073741823
 -4     11111111 11111111 11111111 11111100
--&gt;     00111111 11111111 11111111 11111111</code></pre><h4 id="amp-按位与"><a href="#amp-按位与" class="headerlink" title="&amp;  按位与"></a>&amp;  按位与</h4><pre><code>运算规则： a&amp;b 先将a,b转化为二进制数，当且仅当相同位数都为1时，结果是1，否则为0
+-&gt;     00111111 11111111 11111111 11111111
+</code></pre>
+<h4 id="按位与"><a href="#按位与" class="headerlink" title="&amp;  按位与"></a>&amp;  按位与</h4><pre><code>运算规则： a&amp;b 先将a,b转化为二进制数，当且仅当相同位数都为1时，结果是1，否则为0
 eg: 3&amp;5的计算过程
 3      00000000 00000000 00000000 00000011
 5      00000000 00000000 00000000 00000101
-result 00000000 00000000 00000000 00000001 =&gt; 1</code></pre><h4 id="按位或"><a href="#按位或" class="headerlink" title="|  按位或"></a>|  按位或</h4><pre><code>运算规则： a|b 先将a,b转化为二进制数，当且仅当相同位数都为0时，结果是0，否则为1
+result 00000000 00000000 00000000 00000001 =&gt; 1
+</code></pre>
+<h4 id="按位或"><a href="#按位或" class="headerlink" title="|  按位或"></a>|  按位或</h4><pre><code>运算规则： a|b 先将a,b转化为二进制数，当且仅当相同位数都为0时，结果是0，否则为1
 eg: 3|5的计算过程
 3      00000000 00000000 00000000 00000011
 5      00000000 00000000 00000000 00000101
-result 00000000 00000000 00000000 00000111 =&gt; 7</code></pre><h4 id="按位异或"><a href="#按位异或" class="headerlink" title="^  按位异或"></a>^  按位异或</h4><pre><code>运算规则： a^b 先将a,b转化为二进制数，当且仅当相同位数只有一个为1时，结果是1，否则为0
+result 00000000 00000000 00000000 00000111 =&gt; 7
+</code></pre>
+<h4 id="按位异或"><a href="#按位异或" class="headerlink" title="^  按位异或"></a>^  按位异或</h4><pre><code>运算规则： a^b 先将a,b转化为二进制数，当且仅当相同位数只有一个为1时，结果是1，否则为0
 eg: 3^5的计算过程
 3      00000000 00000000 00000000 00000011
 5      00000000 00000000 00000000 00000101
-result 00000000 00000000 00000000 00000110 =&gt; 6</code></pre>
+result 00000000 00000000 00000000 00000110 =&gt; 6
+</code></pre>
+
     </div>
 
     
@@ -354,7 +366,7 @@ result 00000000 00000000 00000000 00000110 =&gt; 6</code></pre>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">2.</span> <span class="nav-text">位运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E9%9D%9E"><span class="nav-number">2.1.</span> <span class="nav-text">~  按位非</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E4%BD%8D"><span class="nav-number">2.2.</span> <span class="nav-text">移位</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#lt-lt-%E5%92%8C-gt-gt"><span class="nav-number">2.2.1.</span> <span class="nav-text">&lt;&lt; 和 &gt;&gt;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#gt-gt-gt-%E6%97%A0%E7%AC%A6%E5%8F%B7%E5%8F%B3%E7%A7%BB"><span class="nav-number">2.2.2.</span> <span class="nav-text">&gt;&gt;&gt;  无符号右移</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#amp-%E6%8C%89%E4%BD%8D%E4%B8%8E"><span class="nav-number">2.3.</span> <span class="nav-text">&amp;  按位与</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E6%88%96"><span class="nav-number">2.4.</span> <span class="nav-text">|  按位或</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E5%BC%82%E6%88%96"><span class="nav-number">2.5.</span> <span class="nav-text">^  按位异或</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">2.</span> <span class="nav-text">位运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E9%9D%9E"><span class="nav-number">2.1.</span> <span class="nav-text">~  按位非</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E4%BD%8D"><span class="nav-number">2.2.</span> <span class="nav-text">移位</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%92%8C"><span class="nav-number">2.2.1.</span> <span class="nav-text">&lt;&lt; 和 &gt;&gt;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%97%A0%E7%AC%A6%E5%8F%B7%E5%8F%B3%E7%A7%BB"><span class="nav-number">2.2.2.</span> <span class="nav-text">&gt;&gt;&gt;  无符号右移</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E4%B8%8E"><span class="nav-number">2.3.</span> <span class="nav-text">&amp;  按位与</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E6%88%96"><span class="nav-number">2.4.</span> <span class="nav-text">|  按位或</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%89%E4%BD%8D%E5%BC%82%E6%88%96"><span class="nav-number">2.5.</span> <span class="nav-text">^  按位异或</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -417,7 +429,7 @@ result 00000000 00000000 00000000 00000110 =&gt; 6</code></pre>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

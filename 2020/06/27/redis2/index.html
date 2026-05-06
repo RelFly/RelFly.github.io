@@ -230,7 +230,7 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  之前有做过redis的一些知识点总结，本章主要针对redis中key的过期策略和淘汰机制内容做一下总结。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="过期策略"><a href="#过期策略" class="headerlink" title="过期策略"></a>过期策略</h3><ol>
 <li><p>定期删除：属于主动删除策略，每隔一段时间随机选择一批key，删除其中过期的</p>
@@ -259,7 +259,9 @@
 <p>  redis基于内存占用的考虑及数据结构的设计考虑没有引用队列或双向列表去做LRU。<br>  其逻辑是仿照LRU的实现逻辑，使用时间戳比较key的使用顺序，并且并没有对所有的key进行计算操作，而是随机的选择一些进行LRU的淘汰。</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>  本章主要总结了redis过期淘汰涉及的相关概念，重点是redis的LRU逻辑，他是一种近似LRU算
 法，基于对性能的考虑并没有对所有key进行计算，而是折中的选取一些，兼顾了淘汰的结果和执
-行的性能。</code></pre>
+行的性能。
+</code></pre>
+
     </div>
 
     
@@ -405,7 +407,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

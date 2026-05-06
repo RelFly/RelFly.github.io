@@ -234,23 +234,27 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  准备开始阅读《Thinking in Java(第四版)》，这是Java的经典书籍，看了下目录，基本涵盖了Java编程的所有知识点。<br>  本章先从第一，二章开始记录。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="对象导论"><a href="#对象导论" class="headerlink" title="对象导论"></a>对象导论</h3><p>  作为本书的第一章，对象导论围绕面向对象，简述了其思想，设计以及相关的概念。</p>
 <h4 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h4><p>  Java是面向对象的编程语言，那么对象，究竟如何理解与定义？</p>
 <p>  先看看面向对象语言的鼻祖-smalltakl的五个特性：</p>
-<pre><code>1. 万物皆对象
-2. 程序是对象的集合，他们通过发送消息(可以理解为方法的调用)来告知彼此要做什么
-3. 每个对象都有自己的由其他对象所构成的存储(可以理解成类的聚合和组合关系)
-4. 每个对象都拥有类型即每个对象都是某个类(class)的一个实例
-5. 某一特定类型的所有对象都可以接手同样的消息(继承)</code></pre><p>  关于对象，还有这么一个简单的描述：</p>
+<pre><code> 1. 万物皆对象
+ 2. 程序是对象的集合，他们通过发送消息(可以理解为方法的调用)来告知彼此要做什么
+ 3. 每个对象都有自己的由其他对象所构成的存储(可以理解成类的聚合和组合关系)
+ 4. 每个对象都拥有类型即每个对象都是某个类(class)的一个实例
+ 5. 某一特定类型的所有对象都可以接手同样的消息(继承)
+</code></pre>
+<p>  关于对象，还有这么一个简单的描述：</p>
 <blockquote>
 <p> <em>对象具有状态，行为和标识   —Booch</em></p>
 </blockquote>
-<pre><code>1. 状态：对象拥有的内部数据(属性)
-2. 行为：对象的方法
-3. 标识：区分对象的唯一的地址(书中解释到这一点有些过于受限，当对象被存储在不同的机器和地址空间或者
-           硬盘上时，标识就应该是内存地址之外的其他东西)</code></pre><p>  对象，是遵照一定规则对实际问题的抽象或者说描述。比如：老鹰，新建一个老鹰的类型，它的属性有性别，年龄等，它的行为有飞行，捕食等。<br>  而将属性具体化后，就得到一个对象。通过执行对象的行为来完成对实际问题的描述，例如调用他的飞行方法描述飞翔的过程。</p>
+<pre><code> 1. 状态：对象拥有的内部数据(属性)
+ 2. 行为：对象的方法
+ 3. 标识：区分对象的唯一的地址(书中解释到这一点有些过于受限，当对象被存储在不同的机器和地址空间或者
+            硬盘上时，标识就应该是内存地址之外的其他东西)
+</code></pre>
+<p>  对象，是遵照一定规则对实际问题的抽象或者说描述。比如：老鹰，新建一个老鹰的类型，它的属性有性别，年龄等，它的行为有飞行，捕食等。<br>  而将属性具体化后，就得到一个对象。通过执行对象的行为来完成对实际问题的描述，例如调用他的飞行方法描述飞翔的过程。</p>
 <h4 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h4><p>  面向对象的思想其实很好理解，他即是将现实事物转为程序语言去处理。抽象出现实事务的属性和行为作为一个类型，然后创建对应的对象完成对现实问题的描述(可以理解为业务逻辑的完成)。</p>
 <blockquote>
 <p> <em>这是一种更灵活更强有力的语言抽象</em></p>
@@ -267,17 +271,21 @@
    常借助代码的访问控制达成(public,private,protected)
 4. 多态，基于继承的关系，在编译期可以将一个对象当作他的父类对待，直到运行期才确定他的类型。这种特
    性可以提高代码的扩展性，例如：一个方法的入参可以用父类定义，而传参时选择不同的子类以完成不同的
-   逻辑处理</code></pre><h3 id="一切都是对象"><a href="#一切都是对象" class="headerlink" title="一切都是对象"></a>一切都是对象</h3><p>  本书第二章从对象的创建谈起，逐步讲述了怎样构建一个简单的Java程序，包括编码规范，注释，javadoc标签等。因为是比较基础的内容，所以就摘一些我比较感兴趣的记录一下。</p>
+   逻辑处理
+</code></pre>
+<h3 id="一切都是对象"><a href="#一切都是对象" class="headerlink" title="一切都是对象"></a>一切都是对象</h3><p>  本书第二章从对象的创建谈起，逐步讲述了怎样构建一个简单的Java程序，包括编码规范，注释，javadoc标签等。因为是比较基础的内容，所以就摘一些我比较感兴趣的记录一下。</p>
 <h4 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h4><p>  Java中对对象的控制是用引用完成的，例如</p>
 <blockquote>
-<p>ClassA a = new ClassA();</p>
+<p>ClassA a &#x3D; new ClassA();</p>
 </blockquote>
 <p>  这里初始化一个类型ClassA的对象a，a只是对象的一个引用，是一个地址值，指向堆中实际数据存储的地方。<br>  这也是在参数传递的时候时常容易忽略的问题。<br>  参数如果是对象，传递的是对象的引用值，那么方法内的操作就会反馈到同一对象的所有引用上。<br>  参数如果是基本类型，基本类型存储的是数据本身，这时传递的就是数据的值，所以不影响方法外的基本类型的值。<br>  这里举个简单的例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ClassB b = <span class="keyword">new</span> ClassB(<span class="number">1</span>);</span><br><span class="line"><span class="keyword">int</span> c = <span class="number">1</span>;</span><br><span class="line">updateB(b,c);</span><br><span class="line"></span><br><span class="line"><span class="comment">// b的value属性会改变，而c的值不变</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateB</span><span class="params">(ClassB param1, <span class="keyword">int</span> param2)</span></span>&#123;</span><br><span class="line">  param1.value = <span class="number">2</span>;</span><br><span class="line">  param2 = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ClassB</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassB</span>(<span class="number">1</span>);</span><br><span class="line"><span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">updateB(b,c);</span><br><span class="line"></span><br><span class="line"><span class="comment">// b的value属性会改变，而c的值不变</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateB</span><span class="params">(ClassB param1, <span class="type">int</span> param2)</span>&#123;</span><br><span class="line">  param1.value = <span class="number">2</span>;</span><br><span class="line">  param2 = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h4 id="static"><a href="#static" class="headerlink" title="static"></a>static</h4><p>  static关键字是常用的关键字之一。他开辟独属于类的存储空间，不依赖于对象的创建，是所有对象公有的。<br>  当类第一次加载时，static修饰的方法，属性，代码块就会随之加载，且只会加载这一次。<br>  因此我们可以将一些类的初始化操作(设置默认值等)，常量，公用方法用static修饰处理，因为只会加载一次，所以一方面提升效率，另一方面保证数据不可变。</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><pre><code>  书的第一章，第二章比较基础，介绍了面向对象的思想，Java的基础概念。算是温故了一些知识点，不过对
-面向对象及对象的一些概念的阐述感觉让自己的认知更加清晰了。</code></pre><blockquote>
+面向对象及对象的一些概念的阐述感觉让自己的认知更加清晰了。
+</code></pre>
+<blockquote>
 <p>下一章 <a href="https://rel-fly.com/2020/06/07/ThinkingInJava2/">&lt;ThinkingInJava-2&gt;</a></p>
 </blockquote>
 
@@ -426,7 +434,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

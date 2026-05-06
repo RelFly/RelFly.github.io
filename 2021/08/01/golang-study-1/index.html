@@ -234,15 +234,14 @@
 
       
         <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>  终于要开始Go的学习记录，本章先简单了解下Go。</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h3 id="Hello-Golang"><a href="#Hello-Golang" class="headerlink" title="Hello Golang"></a>Hello Golang</h3><p>   按照惯例，学习一个语言要从Hello World开始：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> str = <span class="string">"Hello World，Hello Golang"</span></span><br><span class="line">	fmt.Println(str)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">var</span> str = <span class="string">&quot;Hello World，Hello Golang&quot;</span></span><br><span class="line">	fmt.Println(str)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>   接下来，以这个Hello World为例，来初步了解下Go。</p>
 <h4 id="package和import"><a href="#package和import" class="headerlink" title="package和import"></a>package和import</h4><p>   package用来设置包名，import用来导入依赖的其他包。这一块与Java还是比较像的。</p>
 <h4 id="func"><a href="#func" class="headerlink" title="func"></a>func</h4><p>   func是定义函数的关键字，可执行的Go程序都必须定义一个名称为main的函数，作为程序启动的入口。<br>   可以看到main的定义与Java就有些不同了，即没有定义返回类型，也没有入参等等。当然，只是简单<br>   的main函数看不出太多差异点。</p>
-<h4 id="var"><a href="#var" class="headerlink" title="var"></a>var</h4><p>   var是创建对象的关键字，这里的语法更偏向C语言。<br>   与java不同的是，并不需要指定类型。而且还能更简化的直接用<em>str := “hello world”</em> 替代。</p>
+<h4 id="var"><a href="#var" class="headerlink" title="var"></a>var</h4><p>   var是创建对象的关键字，这里的语法更偏向C语言。<br>   与java不同的是，并不需要指定类型。而且还能更简化的直接用<em>str :&#x3D; “hello world”</em> 替代。</p>
 <h4 id="fmt-Println"><a href="#fmt-Println" class="headerlink" title="fmt.Println()"></a>fmt.Println()</h4><p>   最后一行的<em>fmt.Println()</em> 是调用了导入的依赖包fmt的方法，来在控制台输出定义的字符串。</p>
 <h3 id="Go的诞生"><a href="#Go的诞生" class="headerlink" title="Go的诞生"></a>Go的诞生</h3><blockquote>
 <p>Go 语言起源 2007 年，并于 2009 年正式对外发布。它从 2009 年 9 月 21 日开始作为 Google 公司 20% 兼职项目，即<br>相关员工利用 20% 的空余时间来参与 Go 语言的研发工作。<br>2009 年 11 月 10 日，开发团队将 Go 语言项目以 BSD-style 授权（完全开源）正式公布了 Linux 和 Mac OS X 平台上<br>的版本。同年 11 月 22 日公布了 Windows 版本。</p>
@@ -264,8 +263,10 @@
 Java的“沉重”也一直饱受诟病。
   作为新生的编程语言的Go，不仅语法上做了很多减法，使其更简洁明了，同时在设计上没有Java中
 类，继承，实现这些面向对象的概念。虽然没有了Java那种层次分明的感觉，但结构会变得更为简单。
-  而且Go对并发，网络通信这些场景的原生支持，也是让Go现在如此火热的重要的原因之一。</code></pre><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><blockquote>
-<p><a href="https://draveness.me/golang/" target="_blank" rel="noopener">Go语言设计与实现</a><br><a href="https://learnku.com/docs/the-little-go-book" target="_blank" rel="noopener">Go简易教程</a><br><a href="https://learnku.com/docs/the-way-to-go" target="_blank" rel="noopener">Go入门指南</a></p>
+  而且Go对并发，网络通信这些场景的原生支持，也是让Go现在如此火热的重要的原因之一。
+</code></pre>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://draveness.me/golang/">Go语言设计与实现</a><br><a target="_blank" rel="noopener" href="https://learnku.com/docs/the-little-go-book">Go简易教程</a><br><a target="_blank" rel="noopener" href="https://learnku.com/docs/the-way-to-go">Go入门指南</a></p>
 </blockquote>
 <h3 id="下一章"><a href="#下一章" class="headerlink" title="下一章"></a>下一章</h3><blockquote>
 <p><a href="https://rel-fly.com/2021/08/13/golang-study-2/">Go学习笔记-数据类型</a></p>
@@ -416,7 +417,7 @@ Java的“沉重”也一直饱受诟病。
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">66k</span>
+    <span title="站点总字数">67k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
